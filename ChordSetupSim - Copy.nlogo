@@ -1,28 +1,16 @@
-  turtles-own [hashid]
-  links-own [delta]
+breed [nodes node]
+breed [msgs msg]
+nodes-own [hid linklist]
+msgs-own [origin dest state]
+
 
 to setup
-  clear-all
-  create-turtles Population
-  ask turtles [
-    set hashid (random (2 ^ Hash_Degree))
-    rt random 10
-    fd random 50
-  ]
-  reset-ticks
-end
-
-to go
-  ask turtles[
-   foreach turtles-here [
-     if (hashid-of ?) > 5 [
-        show ?
-     ]
-     
-   ]
-   
-    
-  ]
+  create-nodes 100
+  ask nodes [
+    set shape "circle"
+    setxy random-xcor random-ycor
+    ]
+  
   
 end
 @#$#@#$#@
