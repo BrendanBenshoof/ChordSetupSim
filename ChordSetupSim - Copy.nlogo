@@ -10,7 +10,7 @@ to setup
   create-nodes Population
   ask nodes [
     set shape "circle"
-    setxy random-xcor random-ycor
+    layout-circle nodes (max-pxcor - 1)
     set hid random (2 ^ Hash_Degree)
     set linklist n-values Hash_Degree [?]
     foreach linklist
@@ -491,7 +491,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.3
+NetLogo 5.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
