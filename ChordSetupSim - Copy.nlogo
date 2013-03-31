@@ -5,13 +5,41 @@ msgs-own [origin dest state]
 
 
 to setup
-  create-nodes 100
+  clear-all
+  reset-ticks
+  create-nodes Population
   ask nodes [
     set shape "circle"
     setxy random-xcor random-ycor
+    set hid random (2 ^ Hash_Degree)
+    set linklist n-values Hash_Degree [?]
+    foreach linklist
+    [
+      set linklist replace-item position ? linklist linklist hid
     ]
-  
-  
+    show hid
+    show linklist
+    ]
+end
+
+to go ;;scope is on each turtle
+  ask nodes in-radius Radius
+  [
+    
+  ] 
+end
+
+
+to-report compare_links [consider old ideal]
+  if consider > ideal
+  [
+    if old - ideal > consider - ideal
+    [
+      report consider
+    ] 
+    report old
+  ]
+  report old  
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
@@ -65,7 +93,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-4
+20
 1
 1
 NIL
@@ -80,7 +108,7 @@ Population
 Population
 0
 100
-30
+24
 1
 1
 NIL
@@ -109,7 +137,7 @@ BUTTON
 72
 180
 Run
-NIL
+go
 T
 1
 T
