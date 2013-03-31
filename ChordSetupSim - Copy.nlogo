@@ -204,6 +204,43 @@ to-report best_finger [hash];;call from node or else
   report node_by_hash output  
   
 end
+
+
+;; m frtom node n just told us they might be our pred
+to notify[m]
+  let n [origin] of m
+  if pred = nobody or false ;;node n is betweeen my pred and me
+   [
+    set pred n
+   ]
+end
+
+;;called by a node to ensure the ring is properly maintained
+to stabalize
+  let x [pred] of suc
+end
+
+
+
+
+
+;; reports true if the node is somewhere in the arc of the chord ring spanning nodes x to y, inclusive
+to-report nodeInRange [x y]
+  report (hid - x) mod  (2 ^ Hash_Degree)  <=  (hid - y) mod  (2 ^ Hash_Degree)
+end
+
+
+;;   12-\
+;;    |  --4
+;;    5----|
+;;
+;;
+
+
+
+
+
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 195
@@ -722,7 +759,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.3
+NetLogo 5.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
