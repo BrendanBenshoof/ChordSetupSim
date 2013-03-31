@@ -17,6 +17,7 @@ to setup
     [
       set linklist replace-item position ? linklist linklist hid
     ]
+    create-link-to self
     show hid
     show linklist
     ]
