@@ -1,7 +1,12 @@
 breed [nodes node]
-breed [msgs msg]
-nodes-own [hid linklist]
-msgs-own [origin dest state]
+nodes-own [hid]
+breed [outs out]
+outs-own [Hashdest NodeDest origin]
+
+breed [ins in]
+ins-own [Hashdest NodeDest origin]
+
+links-own [idealDest]
 
 
 to setup
@@ -10,46 +15,127 @@ to setup
   create-nodes Population
   ask nodes [
     set shape "circle"
-    layout-circle nodes (max-pxcor - 1)
-    set hid random (2 ^ Hash_Degree)
-    set linklist n-values Hash_Degree [?]
-    foreach linklist
-    [
-      set linklist replace-item position ? linklist linklist hid
-    ]
-    create-link-to self
-    show hid
-    show linklist
-    ]
+    set xcor (random max-pxcor * 2) - max-pxcor
+    set ycor (random max-pycor * 2) - max-pycor
+    set hid (random (2 ^ Hash_Degree) - 1)
+  ]
+  ask nodes [set label hid]
 end
 
 to go ;;scope is on each turtle
-  ask nodes in-radius Radius
+  ask nodes
   [
-    
+
+      foreach n-values Hash_Degree [?]
+        [
+          let maybe -1
+          let ideal 0
+          set ideal (hid + 2 ^ ?) mod (2 ^ Hash_Degree)
+          set maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
+          if maybe != self and maybe != -1
+          [
+            ask my-out-links
+            [
+              if idealDest = ideal
+              [
+                die
+              ]
+            ]
+            create-link-to maybe [set idealDest ideal]
+          ]
+        ]
+      ask links [set shape "pretty"]     
   ] 
 end
 
-
-to-report compare_links [consider old ideal]
-  if consider > ideal
-  [
-    if old - ideal > consider - ideal
+to cheat
+  ask nodes [
+    foreach n-values Hash_Degree [?]
     [
-      report consider
-    ] 
-    report old
+      let maybe -1
+      set maybe best_node_by_hash ((hid + 2 ^ ?) mod (2 ^ Hash_Degree))
+      if maybe != self and maybe != -1
+      [
+        create-link-to maybe
+      ]
+    ]
+    
   ]
-  report old  
+  ask links [set shape "pretty"]
+end
+
+
+to-report node_by_hash [hash]
+  let output -1
+  ask nodes [
+    if [hid] of self = hash
+    [
+      set output self
+    ] 
+  ]
+  report output
+end
+
+to-report best_node_by_hash [hash]
+  let output -1
+  let dist (2 ^ Hash_Degree)
+  ask nodes [
+    if (hid - hash) mod (2 ^ Hash_Degree) < dist
+    [
+      set output hid
+      ;;show hid
+      set dist (hid - hash) mod (2 ^ Hash_Degree)
+    ] 
+  ]
+  ;;show (list hash output)
+  report node_by_hash output  
+  
+end
+
+to-report best_node_by_hash_from_subset [hash subset]
+  let output -1
+  let dist (2 ^ Hash_Degree)
+  ask subset [
+    if (hid - hash) mod (2 ^ Hash_Degree) < dist
+    [
+      set output hid
+      ;;show hid
+      set dist (hid - hash) mod (2 ^ Hash_Degree)
+    ] 
+  ]
+  ;;show (list hash output)
+  report node_by_hash output  
+  
+end
+
+
+
+to-report best_finger [hash];;call from node or else
+  let output -1
+  set output self
+  let dist (2 ^ Hash_Degree)
+  set dist  (hid - hash) mod (2 ^ Hash_Degree)
+  
+  ask out-link-neighbors[
+    if (hid - hash) mod (2 ^ Hash_Degree) < dist
+      [
+        set output hid
+        ;;show hid
+        set dist (hid - hash) mod (2 ^ Hash_Degree)
+      ] 
+  ]
+  ;;show (list hash output)
+  report node_by_hash output  
+  
 end
 @#$#@#$#@
 GRAPHICS-WINDOW
 195
 10
-634
-496
-16
-17
+764
+600
+21
+21
 13.0
 1
 10
@@ -57,13 +143,13 @@ GRAPHICS-WINDOW
 1
 1
 0
+0
+0
 1
-1
-1
--16
-16
--17
-17
+-21
+21
+-21
+21
 0
 0
 1
@@ -79,7 +165,7 @@ Radius
 Radius
 0
 100
-11
+17
 1
 1
 NIL
@@ -109,7 +195,7 @@ Population
 Population
 0
 100
-24
+22
 1
 1
 NIL
@@ -139,10 +225,44 @@ BUTTON
 180
 Run
 go
-T
+NIL
 1
 T
-TURTLE
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+93
+206
+168
+239
+Make Pretty
+layout-circle (sort-on [hid] nodes) max-pxcor
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+11
+206
+74
+239
+cheat
+cheat
+NIL
+1
+T
+OBSERVER
 NIL
 NIL
 NIL
@@ -492,7 +612,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.4
+NetLogo 5.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
@@ -508,6 +628,17 @@ true
 0
 Line -7500403 true 150 150 90 180
 Line -7500403 true 150 150 210 180
+
+pretty
+0.0
+-0.2 0 0.0 1.0
+0.0 1 1.0 0.0
+0.2 0 0.0 1.0
+link direction
+true
+0
+Line -7500403 true 150 150 165 210
+Line -7500403 true 150 150 150 150
 
 @#$#@#$#@
 0
