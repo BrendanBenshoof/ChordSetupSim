@@ -1,5 +1,5 @@
 breed [nodes node]
-nodes-own [hid]
+nodes-own [hid pred suc]
 breed [outs out]
 outs-own [Hashdest NodeDest origin]
 
@@ -7,6 +7,63 @@ breed [ins in]
 ins-own [Hashdest NodeDest origin]
 
 links-own [idealDest]
+
+to respond [mymsg]
+  hatch-ins 1 [
+    
+    
+  ]
+  
+  
+end
+
+to go
+  ask outs [
+    if NodeDest != -1
+    [
+      face NodeDest
+      let speed 3
+      if distance NodeDest < speed
+      [
+        set speed distance NodeDest
+      ] 
+      forward speed    
+    ]
+  ]
+  ask ins [
+    if NodeDest != -1
+    [
+      face NodeDest
+      let speed 3
+      if distance NodeDest < speed
+      [
+        set speed distance NodeDest
+      ] 
+      forward speed    
+    ]
+  ]
+  ask nodes[
+    ask outs-here [
+      if NodeDest = myself
+      [
+        ask myself [
+          let newdest 0
+          set newdest best_finger ([Hashdest] of myself)
+          if newdest = self
+          [
+            ;;handle [myself]
+          ]
+          ask myself
+          [
+            set NodeDest newdest
+          ]
+        ]
+      ]
+    ]
+  ]
+  tick
+end
+
 
 
 to setup
@@ -22,17 +79,17 @@ to setup
   ask nodes [set label hid]
 end
 
-to go ;;scope is on each turtle
+to init ;;scope is on each turtle
   ask nodes
   [
-
-      foreach n-values Hash_Degree [?]
-        [
-          let maybe -1
-          let ideal 0
-          set ideal (hid + 2 ^ ?) mod (2 ^ Hash_Degree)
-          set maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
-          if maybe != self and maybe != -1
+    
+    foreach n-values Hash_Degree [?]
+      [
+        let maybe -1
+        let ideal 0
+        set ideal (hid + 2 ^ ?) mod (2 ^ Hash_Degree)
+        set maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
+        if maybe != self and maybe != -1
           [
             ask my-out-links
             [
@@ -41,10 +98,14 @@ to go ;;scope is on each turtle
                 die
               ]
             ]
+            if ? = 0
+            [
+              set suc maybe
+            ]
             create-link-to maybe [set idealDest ideal]
           ]
-        ]
-      ask links [set shape "pretty"]     
+      ]
+    ask links [set shape "pretty"]     
   ] 
 end
 
@@ -109,6 +170,21 @@ to-report best_node_by_hash_from_subset [hash subset]
 end
 
 
+to send_requests
+  foreach n-values Hash_Degree [(hid + (2 ^ ?)) mod (2 ^ Hash_Degree)]
+  [
+    let localbest 0
+    set localbest best_finger ? 
+    hatch-outs 1 [
+      set color red
+      set Hashdest ?
+      set NodeDest localbest 
+      set origin myself
+      set label ""
+    ]
+  ]
+end
+
 
 to-report best_finger [hash];;call from node or else
   let output -1
@@ -165,7 +241,7 @@ Radius
 Radius
 0
 100
-17
+31
 1
 1
 NIL
@@ -223,8 +299,8 @@ BUTTON
 147
 72
 180
-Run
-go
+Init
+init
 NIL
 1
 T
@@ -236,10 +312,10 @@ NIL
 1
 
 BUTTON
-93
-206
-168
-239
+9
+437
+84
+470
 Make Pretty
 layout-circle (sort-on [hid] nodes) max-pxcor
 NIL
@@ -253,13 +329,47 @@ NIL
 1
 
 BUTTON
-11
-206
-74
-239
+101
+438
+164
+471
 cheat
 cheat
 NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+14
+210
+159
+243
+Update Fingers
+ask nodes[\nsend_requests\n]
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+28
+280
+91
+313
+Run
+go
+T
 1
 T
 OBSERVER
@@ -638,7 +748,6 @@ link direction
 true
 0
 Line -7500403 true 150 150 165 210
-Line -7500403 true 150 150 150 150
 
 @#$#@#$#@
 0
