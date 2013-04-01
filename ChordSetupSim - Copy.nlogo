@@ -1,7 +1,7 @@
 breed [nodes node]
 nodes-own [hid pred suc]
 breed [outs out]
-outs-own [Hashdest NodeDest origin]
+outs-own [Hashdest NodeDest origin note]
 
 breed [ins in]
 ins-own [Hashdest NodeDest origin idealorigin]
@@ -22,8 +22,26 @@ to respond [mymsg]
 end
 
 to go
+  if mouse-down?
+  [
+    let newpatch false
+    ask patch mouse-xcor mouse-ycor
+    [
+        ask nodes-here
+        [
+          die
+        ]
+     ]
+
+   ]
+
+    
+    
+  
+  
+  
   ask outs [
-    ifelse NodeDest != -1
+    ifelse NodeDest != nobody
     [
       face NodeDest
       let speed 3
@@ -38,7 +56,7 @@ to go
     ]
   ]
   ask ins [
-    if NodeDest != -1
+    if NodeDest != nobody
     [
       face NodeDest
       let speed 3
@@ -51,21 +69,29 @@ to go
     
   ]
   ask nodes[
+    if random 10 = 1 [ notify]
     ask outs-here [
       if NodeDest = myself
-      [
-        ask myself [
-          let newdest 0
-          set newdest best_finger ([Hashdest] of myself)
-          ask myself
+        [
+          ifelse note != True
           [
-            set NodeDest newdest
-          ]          if newdest = self
+            ask myself [
+              let newdest 0
+              set newdest best_finger ([Hashdest] of myself)
+              ask myself
+              [
+                set NodeDest newdest
+              ]          if newdest = self
+              [
+                respond myself
+              ]
+            ]
+          ]
           [
-            respond myself
+            ask myself [get-notified myself]
+            ask self [die]
           ]
         ]
-      ]
     ]
   ]
   ask nodes[
@@ -76,20 +102,36 @@ to go
         let node_pointer [origin] of self
         ask myself
         [
-         ask my-out-links
-         [
-           if idealDest = ideal 
-           [
-             ask myself
-             [
-               create-link-to node_pointer [set idealDest ideal]
-             ]
-             if end2 != node_pointer
-             [
-               ask self [die]
-             ]
-           ]
-         ]
+          foreach n-values Hash_Degree [(hid + (2 ^ ?) mod (2 ^ Hash_Degree))]
+          [
+            let found false
+            let current ?
+            ask my-out-links
+            [
+              if idealDest = current
+              [
+                set found true
+                if idealDest = ideal 
+                [
+                  ask myself
+                  [
+                    create-link-to node_pointer [set idealDest ideal]
+                  ]
+                  if end2 != node_pointer
+                  [
+                    ask self [die]
+                  ]
+                ]
+              ]
+            ]
+            if not found
+            [
+              if current < [hid] of node_pointer
+              [
+                create-link-to node_pointer [set idealDest ideal]
+              ]
+            ]
+          ]
         ]
         ask self [die]
       ]
@@ -105,18 +147,21 @@ to setup
   reset-ticks
   create-nodes Population
   ask nodes [
+    set suc -1
+    set pred 0
     set shape "circle"
     set xcor (random max-pxcor * 2) - max-pxcor
     set ycor (random max-pycor * 2) - max-pycor
     set hid (random (2 ^ Hash_Degree) - 1)
   ]
-  ask nodes [set label hid]
+  ask nodes [
+    set label hid
+    init
+    ]
 end
 
 to init ;;scope is on each turtle
-  ask nodes
-  [
-    
+  
     foreach n-values Hash_Degree [?]
       [
         let maybe -1
@@ -140,7 +185,6 @@ to init ;;scope is on each turtle
           ]
       ]
     ask links [set shape "pretty"]     
-  ] 
 end
 
 to cheat
@@ -161,7 +205,7 @@ end
 
 
 to-report node_by_hash [hash]
-  let output -1
+  let output nobody
   ask nodes [
     if [hid] of self = hash
     [
@@ -198,7 +242,7 @@ to-report best_node_by_hash_from_subset [hash subset]
       set dist (hid - hash) mod (2 ^ Hash_Degree)
     ] 
   ]
-  ;;;;show (list hash output)
+  show (list hash output)
   report node_by_hash output  
   
 end
@@ -222,18 +266,21 @@ end
 
 to-report best_finger [hash];;call from node or else
   let output -1
-  set output hid
   let dist (2 ^ Hash_Degree)
-  set dist  (hid - hash) mod (2 ^ Hash_Degree)
-  
-  ask out-link-neighbors[
-    if (hid - hash) mod (2 ^ Hash_Degree) < dist
-      [
-        set output hid
-        ;;;;show hid
-        set dist (hid - hash) mod (2 ^ Hash_Degree)
-      ] 
+  ifelse pred != NoBody
+  [
+    set output hid
+    set dist  (hid - hash) mod (2 ^ Hash_Degree)
   ]
+  [
+    if nodeInRange ([hid] of pred) (hid) (hash) 
+    [
+      report self 
+    ]
+    
+  ]
+  
+  set output best_node_by_hash_from_subset hash out-link-neighbors
   ;;show output
   ;;;;show (list hash output)
   report node_by_hash output  
@@ -242,12 +289,32 @@ end
 
 
 ;; m frtom node n just told us they might be our pred
-to notify[m]
-  let n [origin] of m
-  if pred = nobody or false ;;node n is betweeen my pred and me
-   [
-    set pred n
-   ]
+to notify
+  if suc != -1
+  [
+    hatch-outs 1 [
+      set note true
+      set HashDest (([hid] of myself) + 1) mod (2 ^ Hash_Degree)
+      set NodeDest [suc] of myself
+      set origin myself
+      set label ""
+      set color yellow
+    ]
+  ]
+end
+
+to get-notified [msg]
+  ifelse pred = 0
+  [
+    set pred [origin] of msg
+  ]
+  [
+    let possible ([hid] of ([origin] of msg))
+    if nodeInRange [hid] of pred [hid] of self possible
+      [
+        set pred [origin] of msg
+      ]
+  ]
 end
 
 ;;called by a node to ensure the ring is properly maintained
@@ -256,13 +323,12 @@ to stabalize
 end
 
 
-
-
-
 ;; reports true if the node is somewhere in the arc of the chord ring spanning nodes x to y, inclusive
 to-report nodeInRange [low high test ]
- let delta (high - low) mod  (2 ^ Hash_Degree) 
- report (test - low) mod  (2 ^ Hash_Degree) < delta
+  show (list low high test)
+  let delta (high - low) mod  (2 ^ Hash_Degree) 
+  show (test - low) mod  (2 ^ Hash_Degree) < delta
+  report (test - low) mod  (2 ^ Hash_Degree) < delta
 end
 
 
@@ -271,11 +337,11 @@ end
 
 @#$#@#$#@
 GRAPHICS-WINDOW
-195
+279
 10
-790
+900
 626
-22
+23
 22
 13.0
 1
@@ -287,8 +353,8 @@ GRAPHICS-WINDOW
 0
 0
 1
--22
-22
+-23
+23
 -22
 22
 1
@@ -306,7 +372,7 @@ Radius
 Radius
 0
 100
-12
+19
 1
 1
 NIL
@@ -321,7 +387,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-10
+20
 1
 1
 NIL
@@ -336,7 +402,7 @@ Population
 Population
 0
 100
-100
+6
 1
 1
 NIL
@@ -360,27 +426,10 @@ NIL
 1
 
 BUTTON
-9
-147
-72
-180
-Init
-init
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-9
-437
-84
-470
+91
+259
+166
+292
 Make Pretty
 layout-circle (sort-on [hid] nodes) max-pxcor * 0.8
 NIL
@@ -394,10 +443,10 @@ NIL
 1
 
 BUTTON
-101
-438
-164
-471
+14
+309
+77
+342
 cheat
 cheat
 NIL
@@ -435,6 +484,58 @@ BUTTON
 Run
 go
 T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+PLOT
+10
+355
+210
+505
+Links
+time
+links
+0.0
+10.0
+0.0
+1.0
+true
+false
+"" ""
+PENS
+"pen-1" 1.0 0 -7500403 true "" "plot (count links) / (Hash_Degree * count nodes + 1)"
+
+BUTTON
+91
+310
+217
+343
+Make New Nodes
+  if mouse-down?\n  [\n  \n    ask patch mouse-xcor mouse-ycor\n    [\n    if not any? nodes-here\n    [\n    \n        sprout-nodes 1 [\n          setxy mouse-xcor mouse-ycor\n          set shape \"circle\"\n          set hid (random (2 ^ Hash_Degree) - 1)\n          set label hid\n          init\n          set Population Population + 1\n        ]\n    \n    ]\n  ]\n  ]
+T
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+BUTTON
+16
+148
+79
+181
+step
+go
+NIL
 1
 T
 OBSERVER
