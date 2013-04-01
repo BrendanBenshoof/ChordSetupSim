@@ -1,7 +1,7 @@
 breed [nodes node]
 nodes-own [hid pred suc]
 breed [outs out]
-outs-own [Hashdest NodeDest origin note]
+outs-own [Hashdest NodeDest origin note age]
 
 breed [ins in]
 ins-own [Hashdest NodeDest origin idealorigin]
@@ -19,6 +19,28 @@ to respond [mymsg]
   ]
   ask mymsg [ die ] 
   
+end
+
+to prune_my_links
+  foreach n-values Hash_Degree [(hid + (2 ^ ?)) mod (2 ^ Hash_Degree)]
+  [
+    let c 0
+  ask my-out-links  
+  [
+    if ? = idealDest
+    [
+      ifelse c = 0
+      [
+        set c c + 1
+      ]
+      [
+        die
+      ]
+      
+    ]
+    
+  ]
+  ]
 end
 
 to go
@@ -40,6 +62,7 @@ to go
   
   
   ask outs [
+    set age age + 1
     ifelse NodeDest != nobody
     [
       face NodeDest
@@ -51,7 +74,11 @@ to go
       forward speed    
     ]
     [
-      ;;show (list self " is stuck")
+      ;;;;show (list self " is stuck")
+    ]
+    if age > Timeout
+    [
+     die 
     ]
   ]
   ask ins [
@@ -65,10 +92,12 @@ to go
       ] 
       forward speed    
     ]
-    
+
   ]
   ask nodes[
     if random 10 = 1 [ notify]
+    if random 20 = 1 [ send_requests ]
+    prune_my_links
     ask outs-here [
       if NodeDest = myself
         [
@@ -110,7 +139,7 @@ to go
               if idealDest = current
               [
                 set found true
-                if idealDest = ideal 
+                if idealDest = ideal and ideal != myself
                 [
                   ask myself
                   [
@@ -235,11 +264,11 @@ to-report best_node_by_hash [hash]
     if (hid - hash) mod (2 ^ Hash_Degree) < dist
     [
       set output hid
-      ;;;;show hid
+      ;;;;;;show hid
       set dist (hid - hash) mod (2 ^ Hash_Degree)
     ] 
   ]
-  ;;;;show (list hash output)
+  ;;;;;;show (list hash output)
   report node_by_hash output  
   
 end
@@ -251,11 +280,11 @@ to-report best_node_by_hash_from_subset [hash subset]
     if (hid - hash) mod (2 ^ Hash_Degree) < dist
     [
       set output hid
-      ;;;;show hid
+      ;;;;;;show hid
       set dist (hid - hash) mod (2 ^ Hash_Degree)
     ] 
   ]
-  show (list hash output)
+  ;;show (list hash output)
   report node_by_hash output  
   
 end
@@ -267,6 +296,7 @@ to send_requests
     let localbest 0
     set localbest best_finger ? 
     hatch-outs 1 [
+      set age 0
       set color red
       set Hashdest ?
       set NodeDest localbest 
@@ -284,14 +314,14 @@ to-report best_finger [hash];;call from node or else
   [
     if nodeInRange ([hid] of pred) (hid) (hash) 
     [
-      show "Arrived!"
+      ;;show "Arrived!"
       report self 
     ]
   ]
   
   set output best_node_by_hash_from_subset hash out-link-neighbors
-  ;;show output
-  ;;;;show (list hash output)
+  ;;;;show output
+  ;;;;;;show (list hash output)
   report output  
   
 end
@@ -334,12 +364,11 @@ end
 
 ;; reports true if the node is somewhere in the arc of the chord ring spanning nodes x to y, inclusive
 to-report nodeInRange [low high test ]
-  show (list low high test)
+  ;;show (list low high test)
   let delta (high - low) mod  (2 ^ Hash_Degree) 
-  show (test - low) mod  (2 ^ Hash_Degree) < delta
+  ;;show (test - low) mod  (2 ^ Hash_Degree) < delta
   report (test - low) mod  (2 ^ Hash_Degree) < delta
 end
-
 
 
 
@@ -380,7 +409,7 @@ Radius
 Radius
 0
 100
-24
+100
 1
 1
 NIL
@@ -395,7 +424,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-20
+10
 1
 1
 NIL
@@ -410,17 +439,17 @@ Population
 Population
 0
 100
-13
+85
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-97
-145
-161
-178
+13
+175
+77
+208
 Setup
 setup
 NIL
@@ -434,13 +463,13 @@ NIL
 1
 
 BUTTON
-91
-259
-166
-292
+89
+176
+164
+209
 Make Pretty
-layout-circle (sort-on [hid] nodes) max-pxcor * 0.8
-NIL
+layout-circle (sort-by [[hid] of ?1 < [hid] of ?2]  (sort-on [who] nodes)) max-pxcor * 0.8
+T
 1
 T
 OBSERVER
@@ -451,10 +480,10 @@ NIL
 1
 
 BUTTON
-14
-309
-77
-342
+52
+315
+115
+348
 cheat
 cheat
 NIL
@@ -468,27 +497,10 @@ NIL
 1
 
 BUTTON
-14
-210
-159
-243
-Update Fingers
-ask nodes[\nsend_requests\n]
-NIL
-1
-T
-OBSERVER
-NIL
-NIL
-NIL
-NIL
-1
-
-BUTTON
-14
-262
-77
-295
+17
+272
+80
+305
 Run
 go
 T
@@ -502,10 +514,10 @@ NIL
 1
 
 PLOT
-10
-355
-210
-505
+13
+366
+213
+516
 Links
 time
 links
@@ -520,12 +532,12 @@ PENS
 "pen-1" 1.0 0 -7500403 true "" "plot (count links) / (Hash_Degree * count nodes + 1)"
 
 BUTTON
-91
-310
-217
-343
+24
+223
+150
+256
 Make New Nodes
-  if mouse-down?\n  [\n  \n    ask patch mouse-xcor mouse-ycor\n    [\n    if not any? nodes-here\n    [\n    \n        sprout-nodes 1 [\n          setxy mouse-xcor mouse-ycor\n          set shape \"circle\"\n          set hid (random (2 ^ Hash_Degree) - 1)\n          set label hid\n          init\n          set Population Population + 1\n        ]\n    \n    ]\n  ]\n  ]
+  if mouse-down?\n  [\n  \n    ask patch mouse-xcor mouse-ycor\n    [\n    if not any? nodes-here\n    [\n    \n        sprout-nodes 1 [\n          setxy mouse-xcor mouse-ycor\n          set shape \"circle\"\n          set hid (random (2 ^ Hash_Degree) - 1)\n          set label hid\n          init\n          set Population Population + 1\n        ]\n    \n    ]\n    \n  ]\n  tick\n  ]\n  
 T
 1
 T
@@ -537,10 +549,10 @@ NIL
 1
 
 BUTTON
-16
-148
-79
-181
+99
+273
+162
+306
 step
 go
 NIL
@@ -552,6 +564,21 @@ NIL
 NIL
 NIL
 1
+
+SLIDER
+7
+137
+179
+170
+Timeout
+Timeout
+100
+10000
+100
+100
+1
+Ticks
+HORIZONTAL
 
 @#$#@#$#@
 ## WHAT IS IT?
