@@ -24,19 +24,18 @@ end
 to go
   if mouse-down?
   [
-    let newpatch false
     ask patch mouse-xcor mouse-ycor
     [
-        ask nodes-here
+      ask nodes-here
         [
           die
         ]
-     ]
-
-   ]
-
+    ]
     
-    
+  ]
+  
+  
+  
   
   
   
@@ -122,14 +121,28 @@ to go
                     ask self [die]
                   ]
                 ]
+                if ? = 1
+                [
+                  ask myself
+                  [
+                    set suc [end2] of myself
+                  ]
+                ]
+                
               ]
+              
             ]
             if not found
             [
               if current < [hid] of node_pointer
               [
                 create-link-to node_pointer [set idealDest ideal]
+                if ? = 1
+                [
+                  set suc [end2] of node_pointer
+                ]
               ]
+              
             ]
           ]
         ]
@@ -157,34 +170,34 @@ to setup
   ask nodes [
     set label hid
     init
-    ]
+  ]
 end
 
 to init ;;scope is on each turtle
   
-    foreach n-values Hash_Degree [?]
-      [
-        let maybe -1
-        let ideal 0
-        set ideal (hid + 2 ^ ?) mod (2 ^ Hash_Degree)
-        set maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
-        if maybe != self and maybe != -1
-          [
-            ask my-out-links
+  foreach n-values Hash_Degree [?]
+    [
+      let maybe -1
+      let ideal 0
+      set ideal (hid + 2 ^ ?) mod (2 ^ Hash_Degree)
+      set maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
+      if maybe != self and maybe != -1
+        [
+          ask my-out-links
             [
               if idealDest = ideal
               [
                 die
               ]
             ]
-            if ? = 0
+          if ? = 0
             [
               set suc maybe
             ]
-            create-link-to maybe [set idealDest ideal]
-          ]
-      ]
-    ask links [set shape "pretty"]     
+          create-link-to maybe [set idealDest ideal]
+        ]
+    ]
+  ask links [set shape "pretty"]     
 end
 
 to cheat
@@ -267,23 +280,19 @@ end
 to-report best_finger [hash];;call from node or else
   let output -1
   let dist (2 ^ Hash_Degree)
-  ifelse pred != NoBody
-  [
-    set output hid
-    set dist  (hid - hash) mod (2 ^ Hash_Degree)
-  ]
+  if pred != 0
   [
     if nodeInRange ([hid] of pred) (hid) (hash) 
     [
+      show "Arrived!"
       report self 
     ]
-    
   ]
   
   set output best_node_by_hash_from_subset hash out-link-neighbors
   ;;show output
   ;;;;show (list hash output)
-  report node_by_hash output  
+  report output  
   
 end
 
@@ -334,7 +343,6 @@ end
 
 
 
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 279
@@ -372,7 +380,7 @@ Radius
 Radius
 0
 100
-19
+24
 1
 1
 NIL
@@ -402,7 +410,7 @@ Population
 Population
 0
 100
-6
+13
 1
 1
 NIL
