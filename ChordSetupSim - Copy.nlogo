@@ -4,22 +4,26 @@ breed [outs out]
 outs-own [Hashdest NodeDest origin]
 
 breed [ins in]
-ins-own [Hashdest NodeDest origin]
+ins-own [Hashdest NodeDest origin idealorigin]
 
 links-own [idealDest]
 
 to respond [mymsg]
   hatch-ins 1 [
-    
-    
+    set NodeDest ([origin] of mymsg)
+    set origin myself
+    set Hashdest [hid] of ([origin] of mymsg)   
+    set color blue 
+    set label ""
+    set idealorigin [Hashdest] of mymsg
   ]
-  
+  ask mymsg [ die ] 
   
 end
 
 to go
   ask outs [
-    if NodeDest != -1
+    ifelse NodeDest != -1
     [
       face NodeDest
       let speed 3
@@ -28,6 +32,9 @@ to go
         set speed distance NodeDest
       ] 
       forward speed    
+    ]
+    [
+      ;;show (list self " is stuck")
     ]
   ]
   ask ins [
@@ -41,6 +48,7 @@ to go
       ] 
       forward speed    
     ]
+    
   ]
   ask nodes[
     ask outs-here [
@@ -49,15 +57,41 @@ to go
         ask myself [
           let newdest 0
           set newdest best_finger ([Hashdest] of myself)
-          if newdest = self
-          [
-            ;;handle [myself]
-          ]
           ask myself
           [
             set NodeDest newdest
+          ]          if newdest = self
+          [
+            respond myself
           ]
         ]
+      ]
+    ]
+  ]
+  ask nodes[
+    ask ins-here [
+      if NodeDest = myself
+      [
+        let ideal [idealorigin] of self
+        let node_pointer [origin] of self
+        ask myself
+        [
+         ask my-out-links
+         [
+           if idealDest = ideal 
+           [
+             ask myself
+             [
+               create-link-to node_pointer [set idealDest ideal]
+             ]
+             if end2 != node_pointer
+             [
+               ask self [die]
+             ]
+           ]
+         ]
+        ]
+        ask self [die]
       ]
     ]
   ]
@@ -144,11 +178,11 @@ to-report best_node_by_hash [hash]
     if (hid - hash) mod (2 ^ Hash_Degree) < dist
     [
       set output hid
-      ;;show hid
+      ;;;;show hid
       set dist (hid - hash) mod (2 ^ Hash_Degree)
     ] 
   ]
-  ;;show (list hash output)
+  ;;;;show (list hash output)
   report node_by_hash output  
   
 end
@@ -160,11 +194,11 @@ to-report best_node_by_hash_from_subset [hash subset]
     if (hid - hash) mod (2 ^ Hash_Degree) < dist
     [
       set output hid
-      ;;show hid
+      ;;;;show hid
       set dist (hid - hash) mod (2 ^ Hash_Degree)
     ] 
   ]
-  ;;show (list hash output)
+  ;;;;show (list hash output)
   report node_by_hash output  
   
 end
@@ -188,7 +222,7 @@ end
 
 to-report best_finger [hash];;call from node or else
   let output -1
-  set output self
+  set output hid
   let dist (2 ^ Hash_Degree)
   set dist  (hid - hash) mod (2 ^ Hash_Degree)
   
@@ -196,11 +230,12 @@ to-report best_finger [hash];;call from node or else
     if (hid - hash) mod (2 ^ Hash_Degree) < dist
       [
         set output hid
-        ;;show hid
+        ;;;;show hid
         set dist (hid - hash) mod (2 ^ Hash_Degree)
       ] 
   ]
-  ;;show (list hash output)
+  ;;show output
+  ;;;;show (list hash output)
   report node_by_hash output  
   
 end
@@ -225,17 +260,10 @@ end
 
 
 ;; reports true if the node is somewhere in the arc of the chord ring spanning nodes x to y, inclusive
-to-report nodeInRange [x y]
-  report (hid - x) mod  (2 ^ Hash_Degree)  <=  (hid - y) mod  (2 ^ Hash_Degree)
+to-report nodeInRange [low high test ]
+ let delta (high - low) mod  (2 ^ Hash_Degree) 
+ report (test - low) mod  (2 ^ Hash_Degree) < delta
 end
-
-
-;;   12-\
-;;    |  --4
-;;    5----|
-;;
-;;
-
 
 
 
@@ -245,10 +273,10 @@ end
 GRAPHICS-WINDOW
 195
 10
-764
-600
-21
-21
+790
+626
+22
+22
 13.0
 1
 10
@@ -259,12 +287,12 @@ GRAPHICS-WINDOW
 0
 0
 1
--21
-21
--21
-21
-0
-0
+-22
+22
+-22
+22
+1
+1
 1
 ticks
 30.0
@@ -278,7 +306,7 @@ Radius
 Radius
 0
 100
-31
+12
 1
 1
 NIL
@@ -293,7 +321,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-20
+10
 1
 1
 NIL
@@ -308,7 +336,7 @@ Population
 Population
 0
 100
-22
+100
 1
 1
 NIL
@@ -354,7 +382,7 @@ BUTTON
 84
 470
 Make Pretty
-layout-circle (sort-on [hid] nodes) max-pxcor
+layout-circle (sort-on [hid] nodes) max-pxcor * 0.8
 NIL
 1
 T
@@ -400,10 +428,10 @@ NIL
 1
 
 BUTTON
-28
-280
-91
-313
+14
+262
+77
+295
 Run
 go
 T
@@ -759,7 +787,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.4
+NetLogo 5.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
