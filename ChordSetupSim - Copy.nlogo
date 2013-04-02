@@ -626,24 +626,36 @@ Nodes begin by creating local networks, looking within a certain radius for node
 
 The best matching node for a particular target hash id is the node that equals that hash or has the closest matching hash above this.
 
-Nodes hatch out messages and send them along the links to find the node for a particular id it wants to link to.
+Nodes hatch out messages and send them along the links to find the node matching the particular id it wants to link to.  The message gets passed along until it meets the desired node, which sends back an in message.  The original sender then creates a link to the node that sent the in message.
+
+Nodes will periodically discover they have new nodes preceding them.  
 
 
-## HOW TO USE IT
+## SLIDERS
+Radius is the initial "vision" of the node;  when initially determining links, nodes will only look at nodes within this radius.  This creates the initial state of the network.
 
-The hash degree means 
+The hash degree specifies the size of the hash;  each node will be given a random hash id between 0 and 2^(hash_degree)  - 1.
 
-Make pretty arranges the netowrks
+Population specifies the initial number of nodes.
 
-## THINGS TO NOTICE
-
-(suggested things for the user to notice while running the model)
+If ins or outs are alive for a certain number of ticks, they are automatically killed based on the timeout value.  It is only for debugging purposes to find loops.
 
 
-## FINAL PROJECT AIMS
+## RUNNING THE SIMULATION
+The first step is to run setup to create the initial states of the simulation and connect the nodes locally. The next step is to click make pretty to arrange the nodes in a ring ordered by node id.  
 
-(suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
+While the simulation is running, nodes will periodically attempt to update each of their links with the best node, creating nnew links if no link for that hash degree existed before, or replacing the current hash degree link.
 
+Additional nodes can be manually added to the the network at any point.  Those nodes will immediatelly connect locally to neighbors, then perform link mainentence like all the rest of the nodes.
+
+Each node needs to keep track of its predecessor and successor to properly handle insertion. To correct for insertions and deletions, each node periodically notifies its successor of its existence.  This allows the receiving nodes to update thier predecessor. To update the successor, a node asks its successor for its predecessor, and updates accordingly based on the responce.
+
+
+## MESSAGE COLOR CODES
+RED = out, finger update
+YELLOW = out, predecessor notification
+BLUE = in, finger update response
+PURPLE = in, update successor.
 
 ## CREDITS AND REFERENCES
 
@@ -955,7 +967,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.3
+NetLogo 5.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
