@@ -594,11 +594,12 @@ For greater detail, see the Chord paper in the references.
 
 ## HOW IT WORKS
 
-Nodes begin by creating local networks, looking within a certain radius for nodes to link to.  
+Nodes begin by creating local networks, looking within a certain radius for nodes to link to.  Using those connections, nodes then try to create links with other nodes best fitting their finger entries (eg, how far can it skip across the network).
+
 
 ## HOW TO USE IT
 
-(how to use the model, including a description of each of the items in the Interface tab)
+The hash degree means 
 
 ## THINGS TO NOTICE
 
