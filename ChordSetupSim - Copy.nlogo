@@ -370,7 +370,6 @@ to-report nodeInRange [low high test ]
   report (test - low) mod  (2 ^ Hash_Degree) < delta
 end
 
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 279
@@ -408,7 +407,7 @@ Radius
 Radius
 0
 100
-100
+36
 1
 1
 NIL
@@ -438,7 +437,7 @@ Population
 Population
 0
 100
-85
+47
 1
 1
 NIL
@@ -594,32 +593,28 @@ For greater detail, see the Chord paper in the references.
 
 ## HOW IT WORKS
 
-Nodes begin by creating local networks, looking within a certain radius for nodes to link to.  Using those connections, nodes then try to create links with other nodes best fitting their finger entries (eg, how far can it skip across the network).
+Nodes begin by creating local networks, looking within a certain radius for nodes to link to.  Using those connections, nodes then try to create links with other nodes best fitting a hash id corresponding to their finger entries (eg, how far can it skip across the network).  
+
+The best matching node for a particular target hash id is the node that equals that hash or has the closest matching hash above this.
+
+Nodes hatch out messages and send them along the links to find the node for a particular id it wants to link to.
 
 
 ## HOW TO USE IT
 
 The hash degree means 
 
+Make pretty arranges the netowrks
+
 ## THINGS TO NOTICE
 
 (suggested things for the user to notice while running the model)
 
-## THINGS TO TRY
 
-(suggested things for the user to try to do (move sliders, switches, etc.) with the model)
-
-## EXTENDING THE MODEL
+## FINAL PROJECT AIMS
 
 (suggested things to add or change in the Code tab to make the model more complicated, detailed, accurate, etc.)
 
-## NETLOGO FEATURES
-
-(interesting or unusual features of NetLogo that the model uses, particularly in the Code tab; or where workarounds were needed for missing features)
-
-## RELATED MODELS
-
-(models in the NetLogo Models Library and elsewhere which are of related interest)
 
 ## CREDITS AND REFERENCES
 
