@@ -371,7 +371,6 @@ to-report nodeInRange [low high test ]
 end
 
 
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 279
@@ -583,11 +582,19 @@ HORIZONTAL
 @#$#@#$#@
 ## WHAT IS IT?
 
-(a general understanding of what the model is trying to show or explain)
+This is an agent based simulation of a dynamic Chord Protocol.  We have three breeds of turtle agents: node, ins, and outs.  Nodes link to other nodes and send messgaes.  Messages are either outs or ins.   
+
+In Chord, nodes are arranged in a ring, ordered by the hash id.  Each node has a directed link to the node with the next highest id it knows about.  In addition, each node has an additional number of directed links, linking to nodes up to half way across the network. 
+
+Outs travel along these directed links to their destinations.  In an ideal Chord network,a message will traverse log n links to it's destination.
+
+Ins are responses to the out messages; while outs travel along links, ins travel over a "direct connection," not needing the links.
+
+For greater detail, see the Chord paper in the references.
 
 ## HOW IT WORKS
 
-(what rules the agents use to create the overall behavior of the model)
+Nodes begin by creating local networks, looking within a certain radius for nodes to link to.  
 
 ## HOW TO USE IT
 
@@ -615,7 +622,7 @@ HORIZONTAL
 
 ## CREDITS AND REFERENCES
 
-(a reference to the model's URL on the web if it has one, as well as any other necessary credits, citations, and links)
+Chord Paper: http://pdos.csail.mit.edu/papers/ton:chord/
 @#$#@#$#@
 default
 true
@@ -923,7 +930,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.3
+NetLogo 5.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
