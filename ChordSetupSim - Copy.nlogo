@@ -25,41 +25,25 @@ to prune_my_links
   foreach n-values Hash_Degree [(hid + (2 ^ ?)) mod (2 ^ Hash_Degree)]
   [
     let c 0
-  ask my-out-links  
-  [
-    if ? = idealDest
+    ask my-out-links  
     [
-      ifelse c = 0
+      if ? = idealDest
       [
-        set c c + 1
-      ]
-      [
-        die
+        ifelse c = 0
+        [
+          set c c + 1
+        ]
+        [
+          die
+        ]
+        
       ]
       
     ]
-    
-  ]
   ]
 end
 
 to go
-  if mouse-down?
-  [
-    ask patch mouse-xcor mouse-ycor
-    [
-      ask nodes-here
-        [
-          die
-        ]
-    ]
-    
-  ]
-  
-  
-  
-  
-  
   
   ask outs [
     set age age + 1
@@ -74,11 +58,11 @@ to go
       forward speed    
     ]
     [
-      ;;;;show (list self " is stuck")
+      ;;;;;;show (list self " is stuck")
     ]
     if age > Timeout
     [
-     die 
+      die 
     ]
   ]
   ask ins [
@@ -92,24 +76,28 @@ to go
       ] 
       forward speed    
     ]
-
+    
   ]
   ask nodes[
     if random 10 = 1 [ notify]
     if random 20 = 1 [ send_requests ]
     prune_my_links
     ask outs-here [
+      if [pred] of myself = 0 and origin != myself
+      [
+        ask myself [set pred [origin] of myself]
+      ]
       if NodeDest = myself
         [
           ifelse note != True
           [
             ask myself [
-              let newdest 0
-              set newdest best_finger ([Hashdest] of myself)
+              let newdest best_finger ([Hashdest] of myself)
               ask myself
               [
                 set NodeDest newdest
-              ]          if newdest = self
+              ]          
+              if newdest = self
               [
                 respond myself
               ]
@@ -117,61 +105,85 @@ to go
           ]
           [
             ask myself [get-notified myself]
-            ask self [die]
+            die
           ]
         ]
     ]
   ]
   ask nodes[
+    ask my-out-links
+    [
+      if idealDest = ([hid] of myself + 1) mod (2 ^ Hash_Degree)
+      [
+        
+        ask myself [set suc [end2] of myself]
+        
+      ]
+      
+      
+    ]
+    
+    
+    
     ask ins-here [
       if NodeDest = myself
       [
         let ideal [idealorigin] of self
         let node_pointer [origin] of self
-        ask myself
+        ifelse color = violet
         [
-          foreach n-values Hash_Degree [(hid + (2 ^ ?) mod (2 ^ Hash_Degree))]
+          
+          ask myself
           [
-            let found false
-            let current ?
-            ask my-out-links
+          set suc [origin] of myself
+          ask my-out-links
             [
-              if idealDest = current
+              if idealDest = (([hid] of myself + 1) mod (2 ^ Hash_Degree))
               [
-                set found true
-                if idealDest = ideal and ideal != myself
+                die                
+              ]
+            ]
+          create-link-to node_pointer [set idealDest (([hid] of myself + 1) mod (2 ^ Hash_Degree))]
+          ]
+        ]
+        [
+          ask myself
+          [
+            foreach n-values Hash_Degree [(hid + (2 ^ ?) mod (2 ^ Hash_Degree))]
+            [
+              let found false
+              let current ?
+              ask my-out-links
+              [
+                if idealDest = current
                 [
-                  ask myself
+                  set found true
+                  if idealDest = ideal and node_pointer != myself
                   [
-                    create-link-to node_pointer [set idealDest ideal]
-                  ]
-                  if end2 != node_pointer
-                  [
-                    ask self [die]
-                  ]
+                    ask myself
+                    [
+                      create-link-to node_pointer [set idealDest ideal]
+                    ]
+                    if end2 != node_pointer
+                    [
+                      ask self [die]
+                    ]
+                  ]                
                 ]
-                if ? = 1
+                
+              ]
+              if not found
+              [
+                if current < [hid] of node_pointer
                 [
-                  ask myself
+                  create-link-to node_pointer [set idealDest ideal]
+                  if ? = 1
                   [
-                    set suc [end2] of myself
+                    set suc [end2] of node_pointer
                   ]
                 ]
                 
               ]
-              
-            ]
-            if not found
-            [
-              if current < [hid] of node_pointer
-              [
-                create-link-to node_pointer [set idealDest ideal]
-                if ? = 1
-                [
-                  set suc [end2] of node_pointer
-                ]
-              ]
-              
             ]
           ]
         ]
@@ -194,7 +206,7 @@ to setup
     set shape "circle"
     set xcor (random max-pxcor * 2) - max-pxcor
     set ycor (random max-pycor * 2) - max-pycor
-    set hid (random (2 ^ Hash_Degree) - 1)
+    set hid (random ((2 ^ Hash_Degree)))
   ]
   ask nodes [
     set label hid
@@ -226,6 +238,12 @@ to init ;;scope is on each turtle
           create-link-to maybe [set idealDest ideal]
         ]
     ]
+  let ideal (hid - 1) mod (2 ^ Hash_Degree)
+  let maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
+  if maybe != self
+  [
+    set pred maybe
+  ]
   ask links [set shape "pretty"]     
 end
 
@@ -264,11 +282,11 @@ to-report best_node_by_hash [hash]
     if (hid - hash) mod (2 ^ Hash_Degree) < dist
     [
       set output hid
-      ;;;;;;show hid
+      ;;;;;;;;show hid
       set dist (hid - hash) mod (2 ^ Hash_Degree)
     ] 
   ]
-  ;;;;;;show (list hash output)
+  ;;;;;;;;show (list hash output)
   report node_by_hash output  
   
 end
@@ -280,11 +298,11 @@ to-report best_node_by_hash_from_subset [hash subset]
     if (hid - hash) mod (2 ^ Hash_Degree) < dist
     [
       set output hid
-      ;;;;;;show hid
+      ;;;;;;;;show hid
       set dist (hid - hash) mod (2 ^ Hash_Degree)
     ] 
   ]
-  ;;show (list hash output)
+  ;;;;show (list hash output)
   report node_by_hash output  
   
 end
@@ -310,18 +328,16 @@ end
 to-report best_finger [hash];;call from node or else
   let output -1
   let dist (2 ^ Hash_Degree)
-  if pred != 0
-  [
-    if nodeInRange ([hid] of pred) (hid) (hash) 
+  if nodeInRange hid [hid] of suc (hash) 
     [
-      ;;show "Arrived!"
+      ;;;;show "Arrived!"
       report self 
     ]
-  ]
+  
   
   set output best_node_by_hash_from_subset hash out-link-neighbors
-  ;;;;show output
-  ;;;;;;show (list hash output)
+  ;;;;;;show output
+  ;;;;;;;;show (list hash output)
   report output  
   
 end
@@ -351,7 +367,21 @@ to get-notified [msg]
     let possible ([hid] of ([origin] of msg))
     if nodeInRange [hid] of pred [hid] of self possible
       [
-        set pred [origin] of msg
+        let oldpred pred
+        let newpred [origin] of msg
+        if oldpred != newpred
+        [
+          hatch-ins 1 [
+            set NodeDest oldpred
+            set origin newpred
+            set Hashdest [hid] of oldpred   
+            set color violet
+            set label ""
+            set idealorigin ([hid] of newpred)
+          ]
+        set pred newpred
+        
+        ]
       ]
   ]
 end
@@ -369,7 +399,6 @@ to-report nodeInRange [low high test ]
   ;;show (test - low) mod  (2 ^ Hash_Degree) < delta
   report (test - low) mod  (2 ^ Hash_Degree) < delta
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 279
@@ -407,7 +436,7 @@ Radius
 Radius
 0
 100
-36
+33
 1
 1
 NIL
@@ -422,7 +451,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-10
+20
 1
 1
 NIL
@@ -437,7 +466,7 @@ Population
 Population
 0
 100
-47
+5
 1
 1
 NIL
@@ -572,7 +601,7 @@ Timeout
 Timeout
 100
 10000
-100
+10000
 100
 1
 Ticks
@@ -926,7 +955,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.4
+NetLogo 5.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
