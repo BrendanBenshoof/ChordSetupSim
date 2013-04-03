@@ -128,62 +128,38 @@ to go
     ask ins-here [
       if NodeDest = myself
       [
-        let ideal [idealorigin] of self
-        let node_pointer [origin] of self
+        let ideal idealorigin
+        let node_pointer origin
         ifelse color = violet
         [
           
           ask myself
           [
-          set suc [origin] of myself
-          ask my-out-links
+            set suc [origin] of myself
+            ask my-out-links
             [
               if idealDest = (([hid] of myself + 1) mod (2 ^ Hash_Degree))
               [
                 die                
               ]
             ]
-          create-link-to node_pointer [set idealDest (([hid] of myself + 1) mod (2 ^ Hash_Degree))]
+            create-link-to node_pointer [set idealDest (([hid] of myself + 1) mod (2 ^ Hash_Degree))]
           ]
         ]
         [
-          ask myself
+          if node_pointer != myself
           [
-            foreach n-values Hash_Degree [(hid + (2 ^ ?) mod (2 ^ Hash_Degree))]
+            ask myself
             [
-              let found false
-              let current ?
               ask my-out-links
               [
-                if idealDest = current
+                if idealDest = ideal 
                 [
-                  set found true
-                  if idealDest = ideal and node_pointer != myself
-                  [
-                    ask myself
-                    [
-                      create-link-to node_pointer [set idealDest ideal]
-                    ]
-                    if end2 != node_pointer
-                    [
-                      ask self [die]
-                    ]
-                  ]                
+                  die
                 ]
                 
               ]
-              if not found
-              [
-                if current < [hid] of node_pointer
-                [
-                  create-link-to node_pointer [set idealDest ideal]
-                  if ? = 1
-                  [
-                    set suc [end2] of node_pointer
-                  ]
-                ]
-                
-              ]
+              create-link-to node_pointer [set idealDest ideal]
             ]
           ]
         ]
@@ -359,13 +335,13 @@ to notify
 end
 
 to get-notified [msg]
-  ifelse pred = 0
+  ifelse pred = 0 and [origin] of msg != self
   [
     set pred [origin] of msg
   ]
   [
     let possible ([hid] of ([origin] of msg))
-    if nodeInRange [hid] of pred [hid] of self possible
+    ifelse nodeInRange ([hid] of pred) ([hid] of self) possible
       [
         let oldpred pred
         let newpred [origin] of msg
@@ -381,6 +357,16 @@ to get-notified [msg]
           ]
         set pred newpred
         
+        ]
+      ]
+      [
+        hatch-ins 1 [
+          set NodeDest ([origin] of msg)
+          set origin [pred] of myself
+          set Hashdest [hid] of [origin] of msg   
+          set color blue 
+          set label ""
+          set idealorigin [Hashdest] of msg
         ]
       ]
   ]
@@ -436,7 +422,7 @@ Radius
 Radius
 0
 100
-33
+24
 1
 1
 NIL
@@ -466,7 +452,7 @@ Population
 Population
 0
 100
-5
+13
 1
 1
 NIL
@@ -967,7 +953,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.4
+NetLogo 5.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
