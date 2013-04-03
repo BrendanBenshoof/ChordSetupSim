@@ -637,6 +637,8 @@ Additional nodes can be manually added to the the network at any point.  Those n
 Each node needs to keep track of its predecessor and successor to properly handle insertion. To correct for insertions and deletions, each node periodically notifies its successor of its existence.  This allows the receiving nodes to update thier predecessor. To update the successor, a node asks its successor for its predecessor, and updates accordingly based on the responce.
 
 
+The Cheat button is for debugging; it creates the ideal links for each node in the network without message passing.
+
 ## MESSAGE COLOR CODES
 RED = out, finger update
 YELLOW = out, predecessor notification
@@ -953,7 +955,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.3
+NetLogo 5.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
