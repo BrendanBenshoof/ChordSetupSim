@@ -1,5 +1,5 @@
 breed [nodes node]
-nodes-own [hid pred suc]
+nodes-own [hid pred suc fingers]
 breed [outs out]
 outs-own [Hashdest NodeDest origin note age]
 
@@ -7,10 +7,10 @@ breed [ins in]
 ins-own [Hashdest NodeDest origin idealorigin]
 
 breed [updates update]
-updates-own [connectTo]
+updates-own [connectTo slot]
 
 breed [seekers seeker]
-seekers-own [sender seeking]
+seekers-own [sender seeking slot]
 
 
 links-own [idealDest]
@@ -32,7 +32,7 @@ to setup
   ask nodes [
     set label hid
     ;;init
-    create-link-to min-one-of other nodes [distance myself]
+    create-link-to min-one-of other nodes in-radius radius  [distance myself]
   ]
 end
 
@@ -68,9 +68,9 @@ to init ;;scope is on each turtle
   ask links [set shape "pretty"]     
 end
 
-
-
-to find-successor [id requestingNode]  ;; node procedure
+to find-successor [msg]  ;; node procedure
+  let id [seeking] of msg
+  let requestingNode [sender] of msg
   ifelse nodeInRange (hid + 1)  [hid] of suc (id)
   [
     hatch-updates 1 
@@ -95,9 +95,6 @@ to find-successor [id requestingNode]  ;; node procedure
   ]
 end
 
-
-
-
 to-report closest-preceding-node [id] ;; node procedure
   foreach sort-on [ ( - ((hid - id ) mod 2 ^ Hash_Degree))] out-link-neighbors  ;; problem will be here
   [
@@ -105,6 +102,16 @@ to-report closest-preceding-node [id] ;; node procedure
   ]
   report self
 end
+
+
+
+to join-network ;; node procedure
+  ask min-one-of other nodes in-radius radius [distance myself] 
+  [
+    hatch-seekers 1[]
+  ]
+end
+
 
 to respond [mymsg]
   hatch-ins 1 [
