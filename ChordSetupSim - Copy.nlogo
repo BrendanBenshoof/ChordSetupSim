@@ -6,7 +6,105 @@ outs-own [Hashdest NodeDest origin note age]
 breed [ins in]
 ins-own [Hashdest NodeDest origin idealorigin]
 
+breed [updates update]
+updates-own [connectTo]
+
+breed [seekers seeker]
+seekers-own [sender seeking]
+
+
 links-own [idealDest]
+
+
+
+to setup
+  clear-all
+  reset-ticks
+  create-nodes Population
+  ask nodes [
+    set suc -1
+    set pred 0
+    set shape "circle"
+    set xcor (random max-pxcor * 2) - max-pxcor
+    set ycor (random max-pycor * 2) - max-pycor
+    set hid (random ((2 ^ Hash_Degree)))
+  ]
+  ask nodes [
+    set label hid
+    ;;init
+    create-link-to min-one-of other nodes [distance myself]
+  ]
+end
+
+to init ;;scope is on each turtle
+  foreach n-values Hash_Degree [?]
+    [
+      let maybe -1
+      let ideal 0
+      set ideal (hid + 2 ^ ?) mod (2 ^ Hash_Degree)
+      set maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
+      if maybe != self and maybe != -1
+        [
+          ask my-out-links
+            [
+              if idealDest = ideal
+              [
+                die
+              ]
+            ]
+          if ? = 0
+            [
+              set suc maybe
+            ]
+          create-link-to maybe [set idealDest ideal]
+        ]
+    ]
+  let ideal (hid - 1) mod (2 ^ Hash_Degree)
+  let maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
+  if maybe != self
+  [
+    set pred maybe
+  ]
+  ask links [set shape "pretty"]     
+end
+
+
+
+to find-successor [id requestingNode]  ;; node procedure
+  ifelse nodeInRange (hid + 1)  [hid] of suc (id)
+  [
+    hatch-updates 1 
+    [
+      set color "sky"
+      set connectTo suc
+      face requestingNode
+    ]
+  ]
+  [
+    let target closest-preceding-node id
+    if target != self  ;; check this dear lawd  
+    [ 
+      hatch-outs 1 
+      [
+        set color "blue"
+        set seeking target 
+        set sender requestingNode
+        face seeking
+      ]
+    ] 
+  ]
+end
+
+
+
+
+to-report closest-preceding-node [id] ;; node procedure
+  foreach sort-on [ ( - ((hid - id ) mod 2 ^ Hash_Degree))] out-link-neighbors  ;; problem will be here
+  [
+    if  (nodeInRange ([hid + 1] of myself) (id - 1) [hid] of ?) [report ?]
+  ]
+  report self
+end
 
 to respond [mymsg]
   hatch-ins 1 [
@@ -44,7 +142,6 @@ to prune_my_links
 end
 
 to go
-  
   ask outs [
     set age age + 1
     ifelse NodeDest != nobody
@@ -172,56 +269,7 @@ end
 
 
 
-to setup
-  clear-all
-  reset-ticks
-  create-nodes Population
-  ask nodes [
-    set suc -1
-    set pred 0
-    set shape "circle"
-    set xcor (random max-pxcor * 2) - max-pxcor
-    set ycor (random max-pycor * 2) - max-pycor
-    set hid (random ((2 ^ Hash_Degree)))
-  ]
-  ask nodes [
-    set label hid
-    init
-  ]
-end
 
-to init ;;scope is on each turtle
-  
-  foreach n-values Hash_Degree [?]
-    [
-      let maybe -1
-      let ideal 0
-      set ideal (hid + 2 ^ ?) mod (2 ^ Hash_Degree)
-      set maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
-      if maybe != self and maybe != -1
-        [
-          ask my-out-links
-            [
-              if idealDest = ideal
-              [
-                die
-              ]
-            ]
-          if ? = 0
-            [
-              set suc maybe
-            ]
-          create-link-to maybe [set idealDest ideal]
-        ]
-    ]
-  let ideal (hid - 1) mod (2 ^ Hash_Degree)
-  let maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
-  if maybe != self
-  [
-    set pred maybe
-  ]
-  ask links [set shape "pretty"]     
-end
 
 to cheat
   ask nodes [
@@ -482,7 +530,7 @@ BUTTON
 209
 Make Pretty
 layout-circle (sort-by [[hid] of ?1 < [hid] of ?2]  (sort-on [who] nodes)) max-pxcor * 0.8
-T
+NIL
 1
 T
 OBSERVER
