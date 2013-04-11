@@ -4,7 +4,7 @@ breed [outs out]
 outs-own [Hashdest NodeDest origin note age]
 
 breed [ins in]
-ins-own [Hashdest NodeDest origin idealorigin]
+ins-own [Hashdest NodeDest origin idealorigin next]
 
 breed [updates update]
 updates-own [connectTo dest slot]
@@ -97,17 +97,40 @@ to find-successor [msg]  ;; node procedure
 end
 
 to-report closest-preceding-node [id] ;; node procedure
-  foreach sort-on [ ( - ((hid - id ) mod 2 ^ Hash_Degree))] out-link-neighbors  ;; problem will be here
-  ;; obsoleted with fingers, rewrited
-  [
-    if  (nodeInRange ([hid + 1] of myself) (id - 1) [hid] of ?) [report ?]
+  foreach reverse fingers ;; needs to go from highest finger to lowest
+  [  
+    if ? !=  nobody
+    [
+      if nodeInRange ([hid + 1] of myself) (id - 1) ([hid] of ?) 
+      [
+        report ?
+      ]
+    ]
   ]
+  
   report self
+;  foreach sort-on [ ( - ((hid - id ) mod 2 ^ Hash_Degree))] out-link-neighbors  ;; problem will be here
+;  ;; obsoleted with fingers, rewrited
+;  [
+;    if  (nodeInRange ([hid + 1] of myself) (id - 1) [hid] of ?) [report ?]
+;  ]
 end
 
 
+
+;;;;;;;;;;;;; below here todo handle making links to sucessor
+
+
+to create-network  ;; create an empty chord ring
+  set pred nobody 
+  set suc self
+  init-fingers
+end
+
 to join-network ;; node procedure
+  set pred nobody
     set suc min-one-of other nodes [distance myself]
+    init-fingers
     hatch-seekers 1
     [
       set sender myself
@@ -115,16 +138,81 @@ to join-network ;; node procedure
       set slot 0
       set dest min-one-of other nodes [distance myself] 
       face dest
-      inspect dest
     ]
 end
+
+to join-node [n];;node procedure to join node n's ring
+  set pred nobody 
+  set suc n
+  init-fingers
+end
+
+to init-fingers ;; call procedure after setting pred and/or suc
+  foreach fingers [set ? nobody]
+  set fingers replace-item 0 fingers suc
+  set next 0
+end
+
+
 
 
 
 ;;called by a node to ensure the ring is properly maintained
 to stabalize
-  let x [pred] of suc
+  let x [pred] of suc  ;;handle nobody
+  if nodeInRange (hid + 1) ([hid - 1] of suc) ([hid] of x) 
+  [
+    set suc x
+    set fingers replace-item 0 fingers suc
+  ]
+  ask suc [notify self]
 end
+
+to notify [n]
+  ifelse pred = nobody
+  [set pred n]
+  [if nodeInRange ([hid + 1] of pred) (hid - 1) ([hid] of n) [set pred n]]
+end
+
+
+
+to fix-fingers
+  set next next + 1
+  if next > Hash_Degree - 1 [set next 0]
+   hatch-seekers 1
+    [
+      set sender myself
+      set seeking [hid + 2 ^ ([next] of myself)] of myself
+      set slot [next] of myself
+      set dest myself ;; "send" to myself first to get the ball rolling, only meaningful way to do it with objects
+      face dest
+    ]
+end
+
+to check-pred  ; redundant turtles become nobody when they die apparently
+  if pred = nobody [set pred nobody]
+end
+
+to receive-update [msg]
+  ;; kill old link if it exist
+  let x fingers
+  ;; create new link
+  
+  
+  
+  ;; update finger table 
+  
+  
+  
+  ;;clean up
+  ask msg [die]
+  connectTo dest slot
+  
+  
+  
+  
+end
+
 
 
 ;; reports true if the node is somewhere in the arc of the chord ring spanning nodes x to y, inclusive
@@ -134,7 +222,6 @@ to-report nodeInRange [low high test ]
   ;;show (test - low) mod  (2 ^ Hash_Degree) < delta
   report (test - low) mod  (2 ^ Hash_Degree) < delta
 end
-
 
 
 
@@ -444,19 +531,7 @@ end
 
 
 ;; m frtom node n just told us they might be our pred
-to notify
-  if suc != -1
-  [
-    hatch-outs 1 [
-      set note true
-      set HashDest (([hid] of myself) + 1) mod (2 ^ Hash_Degree)
-      set NodeDest [suc] of myself
-      set origin myself
-      set label ""
-      set color yellow
-    ]
-  ]
-end
+
 
 to get-notified [msg]
   ifelse pred = 0 and [origin] of msg != self
@@ -495,7 +570,6 @@ to get-notified [msg]
       ]
   ]
 end
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 279
