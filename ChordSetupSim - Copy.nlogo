@@ -2,11 +2,7 @@ breed [nodes node]
 nodes-own [hid pred suc fingers in-ring? next]
 
 
-breed [outs out]
-outs-own [Hashdest NodeDest origin note age]
 
-breed [ins in]
-ins-own [Hashdest NodeDest origin idealorigin]
 
 breed [updates update]
 updates-own [connectTo dest slot]
@@ -14,8 +10,6 @@ updates-own [connectTo dest slot]
 breed [seekers seeker]
 seekers-own [sender seeking dest slot]
 
-
-links-own [idealDest]
 globals [speed]
 
 
@@ -26,18 +20,11 @@ to setup
   clear-all
   clear-output
   reset-ticks
-  set speed 3
+  set speed 1
   
   create-nodes Population
   ask nodes [
-    set suc nobody
-    set pred nobody
-    set in-ring? false
-    set shape "circle"
-    set xcor (random max-pxcor * 2) - max-pxcor
-    set ycor (random max-pycor * 2) - max-pycor
-    set hid (random ((2 ^ Hash_Degree)))
-    set fingers n-values Hash_Degree [nobody]
+    init-props
   ]
   ask nodes [
     set label hid
@@ -49,6 +36,17 @@ to setup
     create-network
   ]
   
+end
+
+to init-props
+  set suc nobody
+  set pred nobody
+  set in-ring? false
+  set shape "circle"
+  set xcor (random (max-pxcor * 2)) - max-pxcor
+  set ycor (random (max-pycor * 2)) - max-pycor
+  set hid (random ((2 ^ Hash_Degree)))
+  set fingers n-values Hash_Degree [nobody]
 end
 
 
@@ -87,19 +85,16 @@ to handle-messages
   ]
 end
 
-
-
 to maintenance
   ask nodes with [in-ring? = false] 
   [
-    print "boo"
     if any? ((nodes in-radius Radius) with [in-ring? = true])
     [
       join-closest
     ]
   ] 
      
-  every 4
+  every Update-Frequency
   [
     ask nodes with [in-ring? = true]
     [
@@ -125,7 +120,7 @@ to find-successor [msg]  ;; node procedure
     [
       hatch-updates 1 
       [
-        print "Hatch update"
+        ;print "Hatch update"
         set color sky
         set connectTo target
         set dest requestingNode
@@ -139,8 +134,9 @@ to find-successor [msg]  ;; node procedure
     [ 
       ask  msg [hatch-seekers 1 
       [
-        print "Hatch find suc"
-        set color "blue"
+       ; print "Hatch find suc"
+       set label ""
+        set color blue
         set dest target
         face target
       ]]
@@ -154,7 +150,7 @@ to-report closest-preceding-node [id] ;; node procedure
   [  
     if ? !=  nobody
     [
-      if nodeInRange ([hid + 1] of myself) (id - 1) ([hid] of ?) 
+      if nodeInRange ([hid + 1] of self) (id - 1) ([hid] of ?) 
       [
         report ?
       ]
@@ -181,7 +177,10 @@ end
 
 ;;;change for in-ring?
 to join-closest ;; node procedure
-  join-node min-one-of other (nodes with [in-ring? = false]) [distance myself]
+  ;join-node min-one-of other (nodes with [in-ring? = false]) [distance myself]
+  let n one-of nodes with [in-ring? = true]
+  show [in-ring?] of n 
+  join-node n
 end
 
 
@@ -191,7 +190,8 @@ to join-node [n];;node procedure to join node n's ring
   init-fingers
   hatch-seekers 1
   [
-    print "Hatch join node"
+    ;print "Hatch join node"
+    set label ""
     set sender myself
     set seeking [hid] of myself
     set slot 0
@@ -204,7 +204,6 @@ end
 
 
 to init-fingers ;; call procedure after setting pred and/or suc
-  foreach fingers [set ? nobody]
   set next 0
 end
 
@@ -219,12 +218,13 @@ to stabalize
       if nodeInRange (hid + 1) ([hid - 1] of suc) ([hid] of x) 
       [
         ;; replace links 
-        ask out-link-to suc [die]  
-        create-link-to x
+        ;ask out-link-to suc [die]  
+        ;create-link-to x
        
         ;; update vars
         set suc x
         set fingers replace-item 0 fingers suc
+        rebuild-links
         
       ]
     ]
@@ -247,7 +247,7 @@ to fix-fingers
   if next > Hash_Degree - 1 [set next 0]
   hatch-seekers 1
     [
-      print "Hatch fix"
+      set label ""
       set sender myself
       set dest myself
       set seeking [hid + 2 ^ next] of dest
@@ -274,27 +274,26 @@ to receive-update [msg]
 
   let myslot [slot] of msg
   
-  ;; kill old link if it exists
-  let old-finger item myslot fingers
-  if old-finger != nobody [ask out-link-to old-finger [die] ] 
-  
-  ;; create new link
-  ifelse [connectTo] of msg = self
-  [print "I'm the best!"]
-  [create-link-to [connectTo] of msg]
   
   ;; update finger table 
   set fingers replace-item myslot fingers [connectTo] of msg
   
   ;;clean up
   if myslot = 0 [set suc [connectTo] of msg]
+  rebuild-links
   
   ask msg [die]
  ; connectTo dest slot
   set in-ring? true
 end
 
-
+to rebuild-links
+  ask my-out-links [die]
+  foreach fingers 
+  [
+    if ? != nobody and ? != self [ create-link-to ?]
+  ]
+end
 
 
 
@@ -679,7 +678,7 @@ BUTTON
 150
 256
 Make New Nodes
-  if mouse-down?\n  [\n  \n    ask patch mouse-xcor mouse-ycor\n    [\n    if not any? nodes-here\n    [\n    \n        sprout-nodes 1 [\n          setxy mouse-xcor mouse-ycor\n          set shape \"circle\"\n          set hid (random (2 ^ Hash_Degree) - 1)\n          set label hid\n          join-closest\n        ]\n    \n    ]\n    \n  ]\n  tick\n  ]\n  
+  if mouse-down?\n  [\n  \n    ask patch mouse-xcor mouse-ycor\n    [\n    if not any? nodes-here\n    [\n    \n        sprout-nodes 1 [\n          init-props\n          setxy mouse-xcor mouse-ycor\n          join-closest\n        ]\n    \n    ]\n    \n  ]\n  tick\n  ]\n  
 T
 1
 T
@@ -720,6 +719,21 @@ Timeout
 100
 1
 Ticks
+HORIZONTAL
+
+SLIDER
+15
+315
+188
+349
+Update-Frequency
+Update-Frequency
+1
+5
+1
+0.25
+1
+NIL
 HORIZONTAL
 
 @#$#@#$#@
