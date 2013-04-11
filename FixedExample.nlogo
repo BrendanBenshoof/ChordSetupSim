@@ -32,7 +32,7 @@ to setup
     ;;create-link-to min-one-of other nodes in-radius radius  [distance myself]
     ;;set suc min-one-of other nodes in-radius radius  [distance myself]
   ]
-  ask one-of nodes [
+  ask n-of inital-seeds nodes [
     create-network
   ]
   
@@ -110,7 +110,7 @@ end
 
 
 to find-successor [msg]  ;; node procedure
-  show msg
+  ;; print msg
   let id [seeking] of msg
   let requestingNode [sender] of msg
   ifelse nodeInRange (hid + 1)  [hid] of suc (id)
@@ -120,7 +120,7 @@ to find-successor [msg]  ;; node procedure
     [
       hatch-updates 1 
       [
-        ;print "Hatch update"
+        ;;; ;; print "Hatch update"
         set color sky
         set connectTo target
         set dest requestingNode
@@ -134,7 +134,7 @@ to find-successor [msg]  ;; node procedure
     [ 
       ask  msg [hatch-seekers 1 
       [
-       ; print "Hatch find suc"
+       ; ;; ;; print "Hatch find suc"
        set label ""
         set color blue
         set dest target
@@ -166,7 +166,7 @@ end
 
 
 to create-network  ;; create an empty chord ring
-  show self
+  ;; print self
   set pred nobody 
   set suc self
   set in-ring? true
@@ -179,7 +179,7 @@ end
 to join-closest ;; node procedure
   ;join-node min-one-of other (nodes with [in-ring? = false]) [distance myself]
   let n one-of nodes with [in-ring? = true]
-  show [in-ring?] of n 
+  ;; print [in-ring?] of n 
   join-node n
 end
 
@@ -190,16 +190,16 @@ to join-node [n];;node procedure to join node n's ring
   init-fingers
   hatch-seekers 1
   [
-    ;print "Hatch join node"
+    ;;; ;; print "Hatch join node"
     set label ""
     set sender myself
     set seeking [hid] of myself
     set slot 0
     set dest n
     face dest
-    show dest
+    ;; print dest
   ]
-  show [in-ring?] of n
+  ;; print [in-ring?] of n
 end
 
 
@@ -270,7 +270,7 @@ end
 ;;This turtle procedure is used when a node finds a
 ;;update message directed at itself
 to receive-update [msg]
-  print "got update"
+  ;; ;; print "got update"
 
   let myslot [slot] of msg
   
@@ -303,9 +303,9 @@ end
 
 ;; reports true if the node is somewhere in the arc of the chord ring spanning nodes x to y, inclusive
 to-report nodeInRange [low high test ]
-  ;;show (list low high test)
+  ;;;; print (list low high test)
   let delta (high - low) mod  (2 ^ Hash_Degree) 
-  ;;show (test - low) mod  (2 ^ Hash_Degree) < delta
+  ;;;; print (test - low) mod  (2 ^ Hash_Degree) < delta
   report (test - low) mod  (2 ^ Hash_Degree) < delta
 end
 
@@ -429,11 +429,11 @@ end
 ;    if (hid - hash) mod (2 ^ Hash_Degree) < dist
 ;    [
 ;      set output hid
-;      ;;;;;;;;show hid
+;      ;;;;;;;;;; print hid
 ;      set dist (hid - hash) mod (2 ^ Hash_Degree)
 ;    ] 
 ;  ]
-;  ;;;;;;;;show (list hash output)
+;  ;;;;;;;;;; print (list hash output)
 ;  report node_by_hash output  
 ;  
 ;end
@@ -445,11 +445,11 @@ end
 ;    if (hid - hash) mod (2 ^ Hash_Degree) < dist
 ;    [
 ;      set output hid
-;      ;;;;;;;;show hid
+;      ;;;;;;;;;; print hid
 ;      set dist (hid - hash) mod (2 ^ Hash_Degree)
 ;    ] 
 ;  ]
-;  ;;;;show (list hash output)
+;  ;;;;;; print (list hash output)
 ;  report node_by_hash output  
 ;  
 ;end
@@ -477,14 +477,14 @@ end
 ;  let dist (2 ^ Hash_Degree)
 ;  if nodeInRange hid [hid] of suc (hash) 
 ;    [
-;      ;;;;show "Arrived!"
+;      ;;;;;; print "Arrived!"
 ;      report self 
 ;    ]
 ;  
 ;  
 ;  set output best_node_by_hash_from_subset hash out-link-neighbors
-;  ;;;;;;show output
-;  ;;;;;;;;show (list hash output)
+;  ;;;;;;;; print output
+;  ;;;;;;;;;; print (list hash output)
 ;  report output  
 ;  
 ;end
@@ -567,7 +567,7 @@ Radius
 Radius
 0
 100
-100
+20
 1
 1
 NIL
@@ -597,17 +597,17 @@ Population
 Population
 0
 100
-14
+20
 1
 1
 NIL
 HORIZONTAL
 
 BUTTON
-13
-175
-77
-208
+18
+222
+82
+255
 Setup
 setup
 NIL
@@ -621,10 +621,10 @@ NIL
 1
 
 BUTTON
-89
-176
-164
-209
+94
+223
+169
+256
 Make Pretty
 layout-circle (sort-by [[hid] of ?1 < [hid] of ?2]  (sort-on [who] nodes)) max-pxcor * 0.8
 NIL
@@ -638,10 +638,10 @@ NIL
 1
 
 BUTTON
-17
-272
-80
-305
+22
+319
+85
+352
 Run
 go
 T
@@ -655,10 +655,10 @@ NIL
 1
 
 PLOT
-13
-366
-213
-516
+18
+413
+218
+563
 Links
 time
 links
@@ -673,10 +673,10 @@ PENS
 "pen-1" 1.0 0 -7500403 true "" "plot (count links) / (Hash_Degree * count nodes + 1)"
 
 BUTTON
-24
-223
-150
-256
+29
+270
+155
+303
 Make New Nodes
   if mouse-down?\n  [\n  \n    ask patch mouse-xcor mouse-ycor\n    [\n    if not any? nodes-here\n    [\n    \n        sprout-nodes 1 [\n          init-props\n          setxy mouse-xcor mouse-ycor\n          join-closest\n        ]\n    \n    ]\n    \n  ]\n  tick\n  ]\n  
 T
@@ -690,10 +690,10 @@ NIL
 1
 
 BUTTON
-99
-273
-162
-306
+104
+320
+167
+353
 step
 go
 NIL
@@ -707,25 +707,10 @@ NIL
 1
 
 SLIDER
-7
-137
-179
-170
-Timeout
-Timeout
-100
-10000
-10000
-100
-1
-Ticks
-HORIZONTAL
-
-SLIDER
-15
-315
-188
-349
+20
+362
+193
+395
 Update-Frequency
 Update-Frequency
 1
@@ -734,6 +719,21 @@ Update-Frequency
 0.25
 1
 NIL
+HORIZONTAL
+
+SLIDER
+7
+142
+179
+175
+inital-seeds
+inital-seeds
+1
+10
+10
+1
+1
+nodes
 HORIZONTAL
 
 @#$#@#$#@
@@ -1098,7 +1098,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.4
+NetLogo 5.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@

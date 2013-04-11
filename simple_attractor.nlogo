@@ -43,6 +43,7 @@ to go
   ;;update sucessor
   set changes 0
   ask turtles[
+    set label myid
     foreach sort other turtles in-radius radius
     [
       ifelse mySucessor = nobody
@@ -138,7 +139,7 @@ radius
 radius
 0
 max-pxcor
-4
+11
 1
 1
 NIL
@@ -153,7 +154,7 @@ avoid-weight
 avoid-weight
 0
 100
-29
+48
 1
 1
 NIL
@@ -168,7 +169,7 @@ follow-weight
 follow-weight
 0
 100
-100
+77
 1
 1
 NIL
@@ -286,7 +287,7 @@ inital-pop
 inital-pop
 0
 1000
-306
+70
 1
 1
 NIL
