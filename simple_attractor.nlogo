@@ -5,7 +5,7 @@ globals [changes]
 to setup
   clear-all
   reset-ticks
-  create-turtles intal-pop [
+  create-turtles inital-pop [
     set myid random 10000
     set mySucessor nobody
     set shape "triangle"
@@ -13,6 +13,25 @@ to setup
     set ycor (Random (2.0 * max-pycor) ) - max-pycor    
   ]
 end
+
+to n-rings [n]
+  clear-all
+  reset-ticks
+  
+  foreach n-values n [0]
+  [
+    let pointx (Random (2.0 * max-pxcor) ) - max-pxcor
+    let pointy (Random (2.0 * max-pycor) ) - max-pycor
+    create-turtles (inital-pop / n) [
+      set myid random 10000
+      set mySucessor nobody
+      set shape "triangle"
+      set xcor pointx
+      set ycor pointy    
+    ]
+  ]
+end
+
 
 to-report get_mod_distance [a b]
   
@@ -43,24 +62,30 @@ to go
   ;; move everybody
   ask turtles [
     ;;show mySucessor
-    ifelse any? other turtles in-radius radius and mySucessor != nobody
+    ifelse mySucessor != nobody
     [
       let jigglex 0
       let jiggley 0
      ; ifelse random 1 = 1 [set jiggley 1] [set jiggley -1]
      ; ifelse random 1 = 1 [set jigglex 1] [set jigglex -1]
-      let goto_x ([xcor] of mySucessor ) - xcor + jigglex
-      let goto_y ([ycor] of mySucessor ) - ycor + jiggley
+      let goto_x ([xcor] of mySucessor ) - xcor; + jigglex
+      let goto_y ([ycor] of mySucessor ) - ycor; + jiggley
       let goto_dist ( goto_x ^ 2.0 + goto_y ^ 2.0 ) ^ 0.5 + 0.01
       set goto_x goto_x / goto_dist
       set goto_y goto_y / goto_dist
-      let avoid_x -1 * one-of ( [xcor] of other turtles in-radius radius ) + xcor
-      let avoid_y -1 * one-of ( [ycor] of other turtles in-radius radius ) + ycor
-      let avoid_dist ( avoid_x ^ 2.0 + avoid_y ^ 2.0 ) ^ 0.5 + 0.01
+      let avoid_x 0
+      let avoid_y 0
+      let avoid_dist 1
+      if (any? other turtles in-radius radius)
+      [
+      set avoid_x -1 * one-of ( [xcor] of other turtles in-radius radius ) + xcor
+      set avoid_y -1 * one-of ( [ycor] of other turtles in-radius radius ) + ycor
+      set avoid_dist ( avoid_x ^ 2.0 + avoid_y ^ 2.0 ) ^ 0.5 + 0.01
       set avoid_x avoid_x / avoid_dist
       set avoid_y avoid_y / avoid_dist
-      let actual_x xcor + ( ( goto_x * follow-weight ) + (avoid_x * avoid-weight ) ) / (follow-weight + avoid-weight) + jigglex
-      let actual_y ycor + ( ( goto_y * follow-weight ) + (avoid_y * avoid-weight ) ) / (follow-weight + avoid-weight) + jiggley
+      ]
+      let actual_x xcor + ( ( goto_x * follow-weight ) + (avoid_x * avoid-weight ) ) / (follow-weight + avoid-weight); + jigglex
+      let actual_y ycor + ( ( goto_y * follow-weight ) + (avoid_y * avoid-weight ) ) / (follow-weight + avoid-weight) ;+ jiggley
       if actual_x != xcor and actual_y != ycor
       [
       set heading (towardsxy actual_x actual_y)
@@ -91,8 +116,8 @@ GRAPHICS-WINDOW
 1
 1
 0
-1
-1
+0
+0
 1
 -50
 50
@@ -113,7 +138,7 @@ radius
 radius
 0
 max-pxcor
-7
+4
 1
 1
 NIL
@@ -128,7 +153,7 @@ avoid-weight
 avoid-weight
 0
 100
-73
+29
 1
 1
 NIL
@@ -150,9 +175,9 @@ NIL
 HORIZONTAL
 
 BUTTON
-31
+13
 203
-94
+76
 236
 NIL
 go
@@ -167,9 +192,9 @@ NIL
 1
 
 BUTTON
-116
+98
 206
-179
+161
 239
 NIL
 setup
@@ -184,10 +209,10 @@ NIL
 1
 
 PLOT
-6
-381
-206
-531
+2
+378
+202
+528
 Change Rate
 Ticks
 Changes
@@ -219,10 +244,10 @@ NIL
 1
 
 BUTTON
-14
-284
-77
-317
+17
+248
+80
+281
 smite
 ask one-of turtles [die]
 NIL
@@ -236,10 +261,10 @@ NIL
 1
 
 BUTTON
-113
-293
-176
-326
+101
+247
+164
+280
 birth
   create-turtles 1 [\n    set myid random 10000\n    set mySucessor nobody\n    set shape \"triangle\"\n    set xcor (Random (2.0 * max-pxcor) ) - max-pxcor\n    set ycor (Random (2.0 * max-pycor) ) - max-pycor    \n  ]
 NIL
@@ -261,7 +286,39 @@ inital-pop
 inital-pop
 0
 1000
-100
+306
+1
+1
+NIL
+HORIZONTAL
+
+BUTTON
+48
+340
+175
+373
+NIL
+n-rings n-of-rings
+NIL
+1
+T
+OBSERVER
+NIL
+NIL
+NIL
+NIL
+1
+
+SLIDER
+23
+296
+195
+329
+n-of-rings
+n-of-rings
+0
+10
+10
 1
 1
 NIL
