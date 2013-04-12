@@ -1,5 +1,5 @@
 breed [nodes node]
-nodes-own [hid pred suc fingers in-ring? next]
+nodes-own [hid pred suc fingers in-ring next]
 
 
 
@@ -9,6 +9,9 @@ updates-own [connectTo dest slot]
 
 breed [seekers seeker]
 seekers-own [sender seeking dest slot]
+
+breed [pings ping]
+pings-own [sender dest in-ring]
 
 globals [speed]
 
@@ -41,7 +44,7 @@ end
 to init-props
   set suc nobody
   set pred nobody
-  set in-ring? false
+  set in-ring -1
   set shape "circle"
   set xcor (random (max-pxcor * 2)) - max-pxcor
   set ycor (random (max-pycor * 2)) - max-pycor
@@ -65,6 +68,12 @@ to move-messages
     [forward distance dest]
     [forward speed]
   ]
+  ask pings[
+    face dest
+    ifelse distance dest < speed
+    [forward distance dest]
+    [forward speed]
+  ]
   ask updates [
     face dest
     ifelse distance dest < speed
@@ -82,13 +91,27 @@ to handle-messages
     set messages updates-here with [dest = myself]
     foreach sort messages [receive-update ?]
     
+    let my-pings pings-here with [dest = myself]
+    foreach sort my-pings [handle-ping ?]
+    
   ]
 end
 
-to maintenance
-  ask nodes with [in-ring? = false] 
+to handle-ping [msg]
+  if [in-ring] of [sender] of msg != in-ring
   [
-    if any? ((nodes in-radius Radius) with [in-ring? = true])
+    set fingers n-values Hash_Degree [nobody]
+    set in-ring [in-ring] of [sender] of msg
+    set suc self
+    join-node [sender] of msg    
+  ]
+  ask msg [die]
+end
+
+to maintenance
+  ask nodes with [in-ring = -1] 
+  [
+    if any? ((nodes in-radius Radius) with [in-ring != -1])
     [
       join-closest
     ]
@@ -96,14 +119,28 @@ to maintenance
      
   every Update-Frequency
   [
-    ask nodes with [in-ring? = true]
+    ask nodes with [in-ring != -1]
     [
       stabalize
       fix-fingers
+      ping-peers
     ]
   ]
 end
 
+
+to ping-peers
+  let peers sort other nodes in-radius Radius
+  foreach peers [
+   hatch-pings 1 [
+     set dest ?
+     set sender myself
+     set in-ring [in-ring] of myself
+     
+   ] 
+    
+  ]
+end
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -169,7 +206,7 @@ to create-network  ;; create an empty chord ring
   ;; print self
   set pred nobody 
   set suc self
-  set in-ring? true
+  set in-ring random 139
   init-fingers
 end
 
@@ -178,7 +215,7 @@ end
 ;;;change for in-ring?
 to join-closest ;; node procedure
   ;join-node min-one-of other (nodes with [in-ring? = false]) [distance myself]
-  let n one-of nodes with [in-ring? = true]
+  let n one-of nodes with [in-ring != -1]
   ;; print [in-ring?] of n 
   join-node n
 end
@@ -279,19 +316,29 @@ to receive-update [msg]
   set fingers replace-item myslot fingers [connectTo] of msg
   
   ;;clean up
-  if myslot = 0 [set suc [connectTo] of msg]
-  rebuild-links
+  if myslot = 0 [
+    set suc [connectTo] of msg
+    show self
+    set in-ring ([in-ring] of [connectTo] of msg)
+    ]
+  rebuild-links 
   
-  ask msg [die]
+  
  ; connectTo dest slot
-  set in-ring? true
+  if [in-ring] of [connectTo] of msg != in-ring
+  [
+    set fingers n-values Hash_Degree [nobody]
+    set in-ring [in-ring] of [connectTo] of msg
+    join-node [connectTo] of msg    
+  ]
+  ask msg [die]
 end
 
 to rebuild-links
   ask my-out-links [die]
   foreach fingers 
   [
-    if ? != nobody and ? != self [ create-link-to ?]
+    if ? != nobody and ? != self [ create-link-to ? [set color (([in-ring] of myself) mod 139)]]
   ]
 end
 
@@ -567,7 +614,7 @@ Radius
 Radius
 0
 100
-20
+15
 1
 1
 NIL
@@ -715,7 +762,7 @@ Update-Frequency
 Update-Frequency
 1
 5
-1
+5
 0.25
 1
 NIL
@@ -730,7 +777,7 @@ inital-seeds
 inital-seeds
 1
 10
-10
+1
 1
 1
 nodes
