@@ -5,10 +5,10 @@ nodes-own [hid pred suc fingers in-ring next]
 
 
 breed [updates update]
-updates-own [connectTo dest slot]
+updates-own [connectTo in-ring dest slot]
 
 breed [seekers seeker]
-seekers-own [sender seeking dest slot]
+seekers-own [sender seeking dest slot in-ring]
 
 breed [pings ping]
 pings-own [sender dest in-ring]
@@ -61,6 +61,19 @@ to go
 end
 
 
+to fix-rings
+  let alien-nodes other nodes in-radius Radius with [in-ring != -1 and [in-ring] of myself != in-ring]
+  ask alien-nodes
+  [
+      set fingers n-values Hash_Degree [nobody]
+      set in-ring [in-ring] of myself
+      set suc self
+    join-node myself
+    
+  ]
+
+end
+
 to move-messages
   ask seekers[
     face dest
@@ -98,7 +111,7 @@ to handle-messages
 end
 
 to handle-ping [msg]
-  if [in-ring] of [sender] of msg != in-ring
+  if in-ring != -1 and [in-ring] of msg != in-ring
   [
     set fingers n-values Hash_Degree [nobody]
     set in-ring [in-ring] of [sender] of msg
@@ -121,63 +134,69 @@ to maintenance
   [
     ask nodes with [in-ring != -1]
     [
+      fix-rings
       stabalize
       fix-fingers
-      ping-peers
+      ;ping-peers
     ]
   ]
 end
 
 
-to ping-peers
-  let peers sort other nodes in-radius Radius
-  foreach peers [
-   hatch-pings 1 [
-     set dest ?
-     set sender myself
-     set in-ring [in-ring] of myself
-     
-   ] 
-    
-  ]
-end
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 
 to find-successor [msg]  ;; node procedure
-  ;; print msg
-  let id [seeking] of msg
-  let requestingNode [sender] of msg
-  ifelse nodeInRange (hid + 1)  [hid] of suc (id)
+                         ;; print msg
+  if suc != nobody
   [
-    let target suc
-    ask msg 
+    ifelse in-ring = -1 or in-ring != [in-ring] of msg
     [
-      hatch-updates 1 
+;      set fingers n-values Hash_Degree [nobody]
+;      set in-ring [in-ring] of [sender] of msg
+;      set suc self
+;    join-node [sender] of msg  
+      
+    ]
+    [
+      let id [seeking] of msg
+      let requestingNode [sender] of msg
+      ifelse nodeInRange (hid + 1)  [hid] of suc (id)
       [
-        ;;; ;; print "Hatch update"
-        set color sky
-        set connectTo target
-        set dest requestingNode
-        face dest
+        let target suc
+        ask msg 
+        [
+          hatch-updates 1 
+          [
+            ;;; ;; print "Hatch update"
+            set color sky
+            set connectTo target
+            set dest requestingNode
+            set in-ring [in-ring] of myself
+            face dest
+          ]
+        ]
+      ]
+      [
+        let target closest-preceding-node id
+        if target != self  ;; check this dear lawd  
+        [ 
+          ask  msg [hatch-seekers 1 
+            [
+              ; ;; ;; print "Hatch find suc"
+              set label ""
+              set color blue
+              set dest target
+              set in-ring [in-ring] of myself
+              face target
+            ]
+          ]
+        ] 
       ]
     ]
-  ]
-  [
-    let target closest-preceding-node id
-    if target != self  ;; check this dear lawd  
-    [ 
-      ask  msg [hatch-seekers 1 
-      [
-       ; ;; ;; print "Hatch find suc"
-       set label ""
-        set color blue
-        set dest target
-        face target
-      ]]
-    ] 
   ]
   ask msg [die]
 end
@@ -215,7 +234,7 @@ end
 ;;;change for in-ring?
 to join-closest ;; node procedure
   ;join-node min-one-of other (nodes with [in-ring? = false]) [distance myself]
-  let n one-of nodes with [in-ring != -1]
+  let n one-of nodes in-radius Radius with [in-ring != -1]
   ;; print [in-ring?] of n 
   join-node n
 end
@@ -233,6 +252,7 @@ to join-node [n];;node procedure to join node n's ring
     set seeking [hid] of myself
     set slot 0
     set dest n
+    set in-ring [in-ring] of n
     face dest
     ;; print dest
   ]
@@ -290,6 +310,7 @@ to fix-fingers
       set seeking [hid + 2 ^ next] of dest
       set slot [next] of dest
        ;; "send" to myself first to get the ball rolling, only meaningful way to do it with agents
+      set in-ring [in-ring] of myself
       face dest
     ]
 end
@@ -311,6 +332,8 @@ to receive-update [msg]
 
   let myslot [slot] of msg
   
+  ifelse [in-ring] of msg = in-ring
+  [
   
   ;; update finger table 
   set fingers replace-item myslot fingers [connectTo] of msg
@@ -321,15 +344,22 @@ to receive-update [msg]
     show self
     set in-ring ([in-ring] of [connectTo] of msg)
     ]
+  ]
+  [
+    set fingers n-values Hash_Degree [nobody]
+    set in-ring [in-ring] of [connectTo] of msg
+    set suc self
+    join-node [connectTo] of msg 
+  ]
   rebuild-links 
   
   
  ; connectTo dest slot
   if [in-ring] of [connectTo] of msg != in-ring
   [
-    set fingers n-values Hash_Degree [nobody]
-    set in-ring [in-ring] of [connectTo] of msg
-    join-node [connectTo] of msg    
+;    set fingers n-values Hash_Degree [nobody]
+;    set in-ring [in-ring] of [connectTo] of msg
+;    join-node [connectTo] of msg    
   ]
   ask msg [die]
 end
@@ -338,7 +368,7 @@ to rebuild-links
   ask my-out-links [die]
   foreach fingers 
   [
-    if ? != nobody and ? != self [ create-link-to ? [set color (([in-ring] of myself) mod 139)]]
+    if ? != nobody and ? != self [ create-link-to ? [set color (((([in-ring] of myself / 10) * 10)) mod 139)]]
   ]
 end
 
@@ -614,7 +644,7 @@ Radius
 Radius
 0
 100
-15
+20
 1
 1
 NIL
@@ -629,7 +659,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-20
+10
 1
 1
 NIL
@@ -644,7 +674,7 @@ Population
 Population
 0
 100
-20
+34
 1
 1
 NIL
@@ -762,7 +792,7 @@ Update-Frequency
 Update-Frequency
 1
 5
-5
+1
 0.25
 1
 NIL
@@ -777,7 +807,7 @@ inital-seeds
 inital-seeds
 1
 10
-1
+10
 1
 1
 nodes
