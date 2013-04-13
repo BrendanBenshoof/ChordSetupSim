@@ -49,6 +49,8 @@ to init-props
   set xcor (random (max-pxcor * 2)) - max-pxcor
   set ycor (random (max-pycor * 2)) - max-pycor
   set hid (random ((2 ^ Hash_Degree)))
+ ; let mine hid
+  ;if (any? other nodes with [hid = mine]) [print hid]
   set fingers n-values Hash_Degree [nobody]
 end
 
@@ -60,19 +62,6 @@ to go
   tick
 end
 
-
-to fix-rings
-  let alien-nodes other nodes in-radius Radius with [in-ring != -1 and [in-ring] of myself != in-ring]
-  ask alien-nodes
-  [
-      set fingers n-values Hash_Degree [nobody]
-      set in-ring [in-ring] of myself
-      set suc self
-    join-node myself
-    
-  ]
-
-end
 
 to move-messages
   ask seekers[
@@ -155,11 +144,7 @@ to find-successor [msg]  ;; node procedure
   [
     ifelse in-ring = -1 or in-ring != [in-ring] of msg
     [
-;      set fingers n-values Hash_Degree [nobody]
-;      set in-ring [in-ring] of [sender] of msg
-;      set suc self
-;    join-node [sender] of msg  
-      
+      consider-joining [sender] of msg
     ]
     [
       let id [seeking] of msg
@@ -259,11 +244,39 @@ to join-node [n];;node procedure to join node n's ring
   ;; print [in-ring?] of n
 end
 
+to join-better-ring [n]
+  set in-ring [in-ring] of n
+  set fingers n-values Hash_Degree [nobody]
+  rebuild-links
+  join-node n
+end
+
+
+
+to fix-rings
+  let alien-nodes other nodes in-radius Radius with [in-ring != -1 and [in-ring] of myself != in-ring]
+  ask alien-nodes
+  [
+    consider-joining myself
+  ]
+
+end
+
+
+
+to consider-joining [n]
+  if better-ring? n [join-better-ring n]
+end
+
+
+to-report  better-ring? [n]
+  report [in-ring] of n < in-ring
+end
+
 
 to init-fingers ;; call procedure after setting pred and/or suc
   set next 0
 end
-
 
 
 ;;called by a node to ensure the ring is properly maintained
@@ -274,10 +287,6 @@ to stabalize
     if x != nobody [ 
       if nodeInRange (hid + 1) ([hid - 1] of suc) ([hid] of x) 
       [
-        ;; replace links 
-        ;ask out-link-to suc [die]  
-        ;create-link-to x
-       
         ;; update vars
         set suc x
         set fingers replace-item 0 fingers suc
@@ -286,6 +295,15 @@ to stabalize
       ]
     ]
     ask suc [notify myself]
+  ]
+end
+
+
+to rebuild-links
+  ask my-out-links [die]
+  foreach fingers 
+  [
+    if ? != nobody and ? != self [ create-link-to ? [set color (wrap-color ([in-ring] of myself * 10) + 5)]]
   ]
 end
 
@@ -315,9 +333,9 @@ to fix-fingers
     ]
 end
 
-to check-pred  ; redundant turtles become nobody when they die apparently
-  if pred = nobody [set pred nobody]
-end
+
+
+
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;
@@ -341,11 +359,11 @@ to receive-update [msg]
   ;;clean up
   if myslot = 0 [
     set suc [connectTo] of msg
-    show self
     set in-ring ([in-ring] of [connectTo] of msg)
     ]
   ]
   [
+;    if 
     set fingers n-values Hash_Degree [nobody]
     set in-ring [in-ring] of [connectTo] of msg
     set suc self
@@ -364,13 +382,6 @@ to receive-update [msg]
   ask msg [die]
 end
 
-to rebuild-links
-  ask my-out-links [die]
-  foreach fingers 
-  [
-    if ? != nobody and ? != self [ create-link-to ? [set color (((([in-ring] of myself / 10) * 10)) mod 139)]]
-  ]
-end
 
 
 
@@ -659,7 +670,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-10
+9
 1
 1
 NIL
@@ -674,7 +685,7 @@ Population
 Population
 0
 100
-34
+8
 1
 1
 NIL
@@ -755,7 +766,7 @@ BUTTON
 155
 303
 Make New Nodes
-  if mouse-down?\n  [\n  \n    ask patch mouse-xcor mouse-ycor\n    [\n    if not any? nodes-here\n    [\n    \n        sprout-nodes 1 [\n          init-props\n          setxy mouse-xcor mouse-ycor\n          join-closest\n        ]\n    \n    ]\n    \n  ]\n  tick\n  ]\n  
+  if mouse-down?\n  [\n  \n    ask patch mouse-xcor mouse-ycor\n    [\n    if not any? nodes-here\n    [\n    \n        sprout-nodes 1 [\n          init-props\n          setxy mouse-xcor mouse-ycor\n          join-closest\n          set label hid\n        ]\n    \n    ]\n    \n  ]\n  tick\n  ]\n  
 T
 1
 T
@@ -807,7 +818,7 @@ inital-seeds
 inital-seeds
 1
 10
-10
+3
 1
 1
 nodes
@@ -1175,7 +1186,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.3
+NetLogo 5.0.4
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
