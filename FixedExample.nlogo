@@ -705,6 +705,17 @@ Absorb-Frequency
 NIL
 HORIZONTAL
 
+MONITOR
+74
+720
+172
+765
+sucessor errors
+count nodes with [suc != item 0 fingers]
+17
+1
+11
+
 @#$#@#$#@
 ## WHAT IS IT?
 
