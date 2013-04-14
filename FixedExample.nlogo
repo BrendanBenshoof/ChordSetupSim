@@ -123,9 +123,19 @@ to maintenance
   [
     ask nodes with [in-ring != -1]
     [
-      fix-rings
+      ;fix-rings
       stabalize
       fix-fingers
+      ;ping-peers
+    ]
+  ]
+  
+  
+  every Absorb-Frequency
+  [
+    ask nodes with [in-ring != -1]
+    [
+      fix-rings
       ;ping-peers
     ]
   ]
@@ -142,45 +152,39 @@ to find-successor [msg]  ;; node procedure
                          ;; print msg
   if suc != nobody
   [
-    ifelse in-ring = -1 or in-ring != [in-ring] of msg
+    let id [seeking] of msg
+    let requestingNode [sender] of msg
+    ifelse nodeInRange (hid + 1)  [hid] of suc (id)
     [
-      consider-joining [sender] of msg
-    ]
-    [
-      let id [seeking] of msg
-      let requestingNode [sender] of msg
-      ifelse nodeInRange (hid + 1)  [hid] of suc (id)
+      let target suc
+      ask msg 
       [
-        let target suc
-        ask msg 
+        hatch-updates 1 
         [
-          hatch-updates 1 
-          [
-            ;;; ;; print "Hatch update"
-            set color sky
-            set connectTo target
-            set dest requestingNode
-            set in-ring [in-ring] of myself
-            face dest
-          ]
+          ;;; ;; print "Hatch update"
+          set color sky
+          set connectTo target
+          set dest requestingNode
+          set in-ring [in-ring] of myself
+          face dest
         ]
       ]
-      [
-        let target closest-preceding-node id
-        if target != self  ;; check this dear lawd  
-        [ 
-          ask  msg [hatch-seekers 1 
-            [
-              ; ;; ;; print "Hatch find suc"
-              set label ""
-              set color blue
-              set dest target
-              set in-ring [in-ring] of myself
-              face target
-            ]
+    ]
+    [
+      let target closest-preceding-node id
+      if target != self  ;; check this dear lawd  
+      [ 
+        ask  msg [hatch-seekers 1 
+          [
+            ; ;; ;; print "Hatch find suc"
+            set label ""
+            set color blue
+            set dest target
+            set in-ring [in-ring] of myself
+            face target
           ]
-        ] 
-      ]
+        ]
+      ] 
     ]
   ]
   ask msg [die]
@@ -246,20 +250,26 @@ end
 
 to join-better-ring [n]
   set in-ring [in-ring] of n
+  set pred nobody
+  set suc n
   set fingers n-values Hash_Degree [nobody]
+  set fingers replace-item 0 fingers suc
   rebuild-links
-  join-node n
-end
-
-
-
-to fix-rings
-  let alien-nodes other nodes in-radius Radius with [in-ring != -1 and [in-ring] of myself != in-ring]
-  ask alien-nodes
+  ask my-in-links [die]
+  
+  hatch-seekers 1
   [
-    consider-joining myself
+    ;;; ;; print "Hatch join node"
+    set label ""
+    set sender myself
+    set seeking [hid] of myself
+    set slot 0
+    set dest n
+    set in-ring [in-ring] of n
+    face dest
+    ;; print dest
   ]
-
+  
 end
 
 
@@ -270,8 +280,20 @@ end
 
 
 to-report  better-ring? [n]
-  report [in-ring] of n < in-ring
+  report [in-ring] of n > in-ring
 end
+
+
+to fix-rings
+  let alien-nodes  one-of other nodes in-radius Radius with [in-ring > -1 and [in-ring] of myself != in-ring]
+  if alien-nodes != nobody[ ask alien-nodes  [ consider-joining myself ]]
+
+end
+
+
+
+
+
 
 
 to init-fingers ;; call procedure after setting pred and/or suc
@@ -303,7 +325,7 @@ to rebuild-links
   ask my-out-links [die]
   foreach fingers 
   [
-    if ? != nobody and ? != self [ create-link-to ? [set color (wrap-color ([in-ring] of myself * 10) + 5)]]
+    if ? != nobody and ? != self [ create-link-to ? [set color (wrap-color ([in-ring] of myself / 10) * 10 + 5)]]
   ]
 end
 
@@ -347,11 +369,7 @@ end
 ;;update message directed at itself
 to receive-update [msg]
   ;; ;; print "got update"
-
   let myslot [slot] of msg
-  
-  ifelse [in-ring] of msg = in-ring
-  [
   
   ;; update finger table 
   set fingers replace-item myslot fingers [connectTo] of msg
@@ -359,33 +377,15 @@ to receive-update [msg]
   ;;clean up
   if myslot = 0 [
     set suc [connectTo] of msg
-    set in-ring ([in-ring] of [connectTo] of msg)
-    ]
+    ;set in-ring ([in-ring] of [connectTo] of msg)
   ]
-  [
-;    if 
-    set fingers n-values Hash_Degree [nobody]
-    set in-ring [in-ring] of [connectTo] of msg
-    set suc self
-    join-node [connectTo] of msg 
-  ]
+  
+  if in-ring < 0 [set in-ring ([in-ring] of [connectTo] of msg)]
+  
   rebuild-links 
   
-  
- ; connectTo dest slot
-  if [in-ring] of [connectTo] of msg != in-ring
-  [
-;    set fingers n-values Hash_Degree [nobody]
-;    set in-ring [in-ring] of [connectTo] of msg
-;    join-node [connectTo] of msg    
-  ]
   ask msg [die]
 end
-
-
-
-
-
 
 
 
@@ -399,225 +399,91 @@ end
 
 
 
-
-
-
-
-
-
-;
-;
-;
-;to init ;;scope is on each turtle
-;  foreach n-values Hash_Degree [?]
+;to find-successor [msg]  ;; node procedure
+;                         ;; print msg
+;  if suc != nobody
+;  [
+;    ifelse in-ring = -1 or in-ring != [in-ring] of msg
 ;    [
-;      let maybe -1
-;      let ideal 0
-;      set ideal (hid + 2 ^ ?) mod (2 ^ Hash_Degree)
-;      set maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
-;      if maybe != self and maybe != -1
-;        [
-;          ask my-out-links
-;            [
-;              if idealDest = ideal
-;              [
-;                die
-;              ]
-;            ]
-;          if ? = 0
-;            [
-;              set suc maybe
-;            ]
-;          create-link-to maybe [set idealDest ideal]
-;        ]
+;      consider-joining [sender] of msg
 ;    ]
-;  let ideal (hid - 1) mod (2 ^ Hash_Degree)
-;  let maybe best_node_by_hash_from_subset ideal Nodes in-radius Radius
-;  if maybe != self
-;  [
-;    set pred maybe
-;  ]
-;  ask links [set shape "pretty"]     
-;end
-;
-;
-;
-;
-;to respond [mymsg]
-;  hatch-ins 1 [
-;    set NodeDest ([origin] of mymsg)
-;    set origin myself
-;    set Hashdest [hid] of ([origin] of mymsg)   
-;    set color blue 
-;    set label ""
-;    set idealorigin [Hashdest] of mymsg
-;  ]
-;  ask mymsg [ die ] 
-;  
-;end
-;
-;to prune_my_links
-;  foreach n-values Hash_Degree [(hid + (2 ^ ?)) mod (2 ^ Hash_Degree)]
-;  [
-;    let c 0
-;    ask my-out-links  
 ;    [
-;      if ? = idealDest
+;      let id [seeking] of msg
+;      let requestingNode [sender] of msg
+;      ifelse nodeInRange (hid + 1)  [hid] of suc (id)
 ;      [
-;        ifelse c = 0
+;        let target suc
+;        ask msg 
 ;        [
-;          set c c + 1
-;        ]
-;        [
-;          die
-;        ]
-;        
-;      ]
-;      
-;    ]
-;  ]
-;end
-;
-;;;;;;;;;;;;;;;;;;   old stuff
-;
-;
-;
-;to cheat
-;  ask nodes [
-;    foreach n-values Hash_Degree [?]
-;    [
-;      let maybe -1
-;      set maybe best_node_by_hash ((hid + 2 ^ ?) mod (2 ^ Hash_Degree))
-;      if maybe != self and maybe != -1
-;      [
-;        create-link-to maybe
-;      ]
-;    ]
-;    
-;  ]
-;  ask links [set shape "pretty"]
-;end
-;
-;
-;to-report node_by_hash [hash]
-;  let output nobody
-;  ask nodes [
-;    if [hid] of self = hash
-;    [
-;      set output self
-;    ] 
-;  ]
-;  report output
-;end
-;
-;to-report best_node_by_hash [hash]
-;  let output -1
-;  let dist (2 ^ Hash_Degree)
-;  ask nodes [
-;    if (hid - hash) mod (2 ^ Hash_Degree) < dist
-;    [
-;      set output hid
-;      ;;;;;;;;;; print hid
-;      set dist (hid - hash) mod (2 ^ Hash_Degree)
-;    ] 
-;  ]
-;  ;;;;;;;;;; print (list hash output)
-;  report node_by_hash output  
-;  
-;end
-;
-;to-report best_node_by_hash_from_subset [hash subset]
-;  let output -1
-;  let dist (2 ^ Hash_Degree)
-;  ask subset [
-;    if (hid - hash) mod (2 ^ Hash_Degree) < dist
-;    [
-;      set output hid
-;      ;;;;;;;;;; print hid
-;      set dist (hid - hash) mod (2 ^ Hash_Degree)
-;    ] 
-;  ]
-;  ;;;;;; print (list hash output)
-;  report node_by_hash output  
-;  
-;end
-;
-;
-;to send_requests
-;  foreach n-values Hash_Degree [(hid + (2 ^ ?)) mod (2 ^ Hash_Degree)]
-;  [
-;    let localbest 0
-;    set localbest best_finger ? 
-;    hatch-outs 1 [
-;      set age 0
-;      set color red
-;      set Hashdest ?
-;      set NodeDest localbest 
-;      set origin myself
-;      set label ""
-;    ]
-;  ]
-;end
-;
-;
-;to-report best_finger [hash];;call from node or else
-;  let output -1
-;  let dist (2 ^ Hash_Degree)
-;  if nodeInRange hid [hid] of suc (hash) 
-;    [
-;      ;;;;;; print "Arrived!"
-;      report self 
-;    ]
-;  
-;  
-;  set output best_node_by_hash_from_subset hash out-link-neighbors
-;  ;;;;;;;; print output
-;  ;;;;;;;;;; print (list hash output)
-;  report output  
-;  
-;end
-;
-;
-;;; m frtom node n just told us they might be our pred
-;
-;
-;to get-notified [msg]
-;  ifelse pred = 0 and [origin] of msg != self
-;  [
-;    set pred [origin] of msg
-;  ]
-;  [
-;    let possible ([hid] of ([origin] of msg))
-;    ifelse nodeInRange ([hid] of pred) ([hid] of self) possible
-;      [
-;        let oldpred pred
-;        let newpred [origin] of msg
-;        if oldpred != newpred
-;        [
-;          hatch-ins 1 [
-;            set NodeDest oldpred
-;            set origin newpred
-;            set Hashdest [hid] of oldpred   
-;            set color violet
-;            set label ""
-;            set idealorigin ([hid] of newpred)
+;          hatch-updates 1 
+;          [
+;            ;;; ;; print "Hatch update"
+;            set color sky
+;            set connectTo target
+;            set dest requestingNode
+;            set in-ring [in-ring] of myself
+;            face dest
 ;          ]
-;        set pred newpred
-;        
 ;        ]
 ;      ]
 ;      [
-;        hatch-ins 1 [
-;          set NodeDest ([origin] of msg)
-;          set origin [pred] of myself
-;          set Hashdest [hid] of [origin] of msg   
-;          set color blue 
-;          set label ""
-;          set idealorigin [Hashdest] of msg
-;        ]
+;        let target closest-preceding-node id
+;        if target != self  ;; check this dear lawd  
+;        [ 
+;          ask  msg [hatch-seekers 1 
+;            [
+;              ; ;; ;; print "Hatch find suc"
+;              set label ""
+;              set color blue
+;              set dest target
+;              set in-ring [in-ring] of myself
+;              face target
+;            ]
+;          ]
+;        ] 
 ;      ]
+;    ]
 ;  ]
+;  ask msg [die]
 ;end
+;
+;
+;
+;;;This turtle procedure is used when a node finds a
+;;;update message directed at itself
+;to receive-update [msg]
+;  ;; ;; print "got update"
+;
+;  let myslot [slot] of msg
+;  
+;  ifelse [in-ring] of msg = in-ring
+;  [
+;  
+;  ;; update finger table 
+;  set fingers replace-item myslot fingers [connectTo] of msg
+;  
+;  ;;clean up
+;  if myslot = 0 [
+;    set suc [connectTo] of msg
+;    set in-ring ([in-ring] of [connectTo] of msg)
+;    ]
+;  ]
+;  [
+;    consider-joining [connectTo] of msg   
+;  ]
+;  rebuild-links 
+;  
+;  
+; ; connectTo dest slot
+;  if [in-ring] of [connectTo] of msg != in-ring
+;  [
+;;    set fingers n-values Hash_Degree [nobody]
+;;    set in-ring [in-ring] of [connectTo] of msg
+;;    join-node [connectTo] of msg    
+;  ]
+;  ask msg [die]
+;en
+
 @#$#@#$#@
 GRAPHICS-WINDOW
 279
@@ -640,8 +506,8 @@ GRAPHICS-WINDOW
 23
 -22
 22
-1
-1
+0
+0
 1
 ticks
 30.0
@@ -655,7 +521,7 @@ Radius
 Radius
 0
 100
-20
+62
 1
 1
 NIL
@@ -670,7 +536,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-9
+14
 1
 1
 NIL
@@ -685,7 +551,7 @@ Population
 Population
 0
 100
-8
+16
 1
 1
 NIL
@@ -743,10 +609,10 @@ NIL
 1
 
 PLOT
-18
-413
-218
-563
+16
+469
+216
+619
 Links
 time
 links
@@ -801,9 +667,9 @@ SLIDER
 395
 Update-Frequency
 Update-Frequency
-1
+0.25
 5
-1
+0.5
 0.25
 1
 NIL
@@ -818,10 +684,25 @@ inital-seeds
 inital-seeds
 1
 10
-3
+4
 1
 1
 nodes
+HORIZONTAL
+
+SLIDER
+20
+402
+192
+435
+Absorb-Frequency
+Absorb-Frequency
+1
+20
+5
+0.25
+1
+NIL
 HORIZONTAL
 
 @#$#@#$#@
