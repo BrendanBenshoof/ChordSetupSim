@@ -1,0 +1,94 @@
+
+\documentclass[10pt, conference, compsocconf, letterpaper]{IEEEtran} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+
+\usepackage{graphicx} % support the \includegraphics command and options
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsthm}
+\usepackage[font=small,labelfont=bf]{caption}
+
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0pt} % customise the layout...
+\lhead{}\chead{}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+
+
+%%% The "real" document content comes below...
+
+\title{}
+\author{Andrew Rosen \qquad Brendan Benshoof }
+\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+
+\begin{document}
+\maketitle
+
+\section{Problem Space}
+
+
+\subsection{Chord}
+
+REWRITE THIS AND ADD MORE ABOUT PSUEDOCODE 
+
+Chord \cite{Chord} takes in some key (in this case the hash of a block of data), and returns the identity (ID) of the node responsible for that key.  Both the keys and the nodes are hashed to create an $m$-bit identifier.
+
+Chord takes the nodes and structures them into a circle composed of less than $2^m$ nodes, ordered clockwise by identifier from lowest to highest.  Chord then takes the keys and places each in the node that has the same hashed identifier as it or the node with the first identifier that follows this value.  The node that takes some key $\kappa$ is known as the $successor$ of $\kappa$, or $successor(\kappa)$.  Since we are dealing with a circle, this assignment is done in module $2^m$ space.  For example, if there were some portion of the network with nodes 20, 25, and 27, node 25 would be responsible for the keys [21,22,23,24,25].
+
+
+With this, we can lookup the node responsible for some key by asking the next node in the circle for the information, who would then pass the request through the circle until the node with the identifier equal or first succeeding the value of the key was found.  That node would be then be able to pass the data, should it exist, back to the requesting node.  This naive approach is largely inefficient, but provides a base example on how nodes in Chord search for information.
+
+What makes Chord efficient is that each node stores the locations of up to $m$ other nodes in the network a \emph{finger table}.  The $i$th entry of the \emph{finger table} of  node $n$ will be the location of $successor(n+2^{i-1})$ $mod$ $2^m$. When a node wants to find some key, it looks to the entry in the finger table that will get it closest to the key without going past.  This allows each step in the to skip up to half the nodes in the network, giving a $\log_2(n)$ lookup time. An example Chord network is shown in Figure \ref{chordreal}.
+
+Further details and the specifics of maintenance and protocol can be found in Stioca et al.'s paper on Chord \cite{Chord}.
+
+
+\section{Goals of Modeling and Simulation}
+To get a A in the course
+
+\section{Developed Models}
+
+
+\section{Experiments}
+
+\section{Results}
+
+\section{Conclusion and Future Work}
+
+
+
+\begin{figure}
+\includegraphics[width=\linewidth]{chordreal}
+\caption{An example size 16 network produced by the simulation.  The lines edges are incoming edges.  Note that, unlike in an ideal Chord network, nodes have differing numbers of incoming and outgoing edges.}
+\label{chordreal}
+\end{figure}
+
+
+
+
+
+
+\bibliographystyle{plain}
+\bibliography{IRMLP}
+
+
+\end{document}
