@@ -4,6 +4,17 @@
 
 \usepackage{graphicx}
 
+\usepackage{listings}
+\usepackage[scaled]{beramono}
+\usepackage[T1]{fontenc}
+
+\lstset{ basicstyle= \ttfamily, language=Logo, tabsize = 4, showspaces= false, showstringspaces=false}
+
+
+
+
+
+
 
 %%% The "real" document content comes below...
 
@@ -16,6 +27,7 @@
 \maketitle
 
 \section{Problem Space}
+
 
 
 \subsection{Chord}
@@ -32,12 +44,27 @@ With this, we can lookup the node responsible for some key by asking the next no
 What makes Chord efficient is that each node stores the locations of up to $m$ other nodes in the network a \emph{finger table}.  The $i$th entry of the \emph{finger table} of  node $n$ will be the location of $successor(n+2^{i-1})$ $mod$ $2^m$. When a node wants to find some key, it looks to the entry in the finger table that will get it closest to the key without going past.  This allows each step in the to skip up to half the nodes in the network, giving a $\log_2(n)$ lookup time. An example Chord network is shown in Figure \ref{chordreal}.
 
 Further details and the specifics of maintenance and protocol can be found in Stioca et al.'s paper on Chord \cite{Chord}.
+ADD SOME MORE PSUEDOCODE
 
 
 \section{Goals of Modeling and Simulation}
-To get a A in the course
+We chose to specifically examine the formation period of a Chord Hash. The cited papers discuss how a single node can join a Chord Hash but gloss over the inital state for building a Chord Hash from scratch in a distributed setting. This made general simulaton of Chord difficult as at least an inital chord ring had to be "boot-strapped" as a pre-connected inital ring so that other nodes can join it. Beause this was an achitecture level design problem, we were not interested in parts of the Chord Hash technique like the behavoir of the actual network topology, latentcy, and server capacity. Thus we make a series of simplifying assumptions.
+
+For this simulation we only consider the over-lay topology, not the underlaying topology of the netowork, thus we create links with the assumption that nodes have the potenital to link into a clique (and in many small netowork cases the system does actually form a clique).
+
+It is important that our latency for this simualtion be varied, but only so that behavoirs that only occur in race conditon could become apparent if they existed but for our purposes the exact qualities of that varience could be left vauge. This allowed us to use travel from node to node in a 2D space
+
 
 \section{Developed Models}
+
+
+
+
+\begin{lstlisting}
+to perform-task
+	do-something
+end
+\end{lstlisting}
 
 
 \section{Experiments}
