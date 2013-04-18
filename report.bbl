@@ -1,0 +1,10 @@
+\begin{thebibliography}{1}
+
+\bibitem{Chord}
+Ion Stoica, Robert Morris, David Karger, M.~Frans Kaashoek, and Hari
+  Balakrishnan.
+\newblock Chord: A scalable peer-to-peer lookup service for internet
+  applications.
+\newblock {\em SIGCOMM Comput. Commun. Rev.}, 31:149--160, August 2001.
+
+\end{thebibliography}
