@@ -61,9 +61,48 @@ It is important that our latency for this simulation be varied, but only so that
 
 
 \begin{lstlisting}
-to perform-task
-	do-something
+to go
+  move-messages
+  handle-messages
+  maintenance
+  tick
 end
+\end{lstlisting}
+
+
+
+\begin{lstlisting}
+to maintenance
+  ask nodes with [in-ring = -1] 
+  [
+    if any? ((nodes in-radius Radius) with [in-ring != -1])
+    [
+      join-closest
+    ]
+  ] 
+     
+  every Update-Frequency
+  [
+    ask nodes with [in-ring != -1]
+    [
+      ;fix-rings
+      stabalize
+      fix-fingers
+      ;ping-peers
+    ]
+  ]
+  
+  
+  every Absorb-Frequency
+  [
+    ask nodes with [in-ring != -1]
+    [
+      fix-rings
+      ;ping-peers
+    ]
+  ]
+end
+
 \end{lstlisting}
 
 
