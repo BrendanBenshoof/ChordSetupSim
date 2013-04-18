@@ -28,7 +28,7 @@
 \newpage
 \section{Problem Space}
 
-
+We are working with Chord
 
 \subsection{Chord}
 
@@ -46,9 +46,9 @@ The nodes are then arranged in a ring from the lowest hash-value to highest.  Ch
 
 With this scheme, we can reliably find the node responsible for some key by asking the next node in the circle for the information, who would then pass the request through the circle until the successor was found.  We can then proceed to directly connect with the successor to retrieve the file.  This naive approach is largely inefficient, and is a simplification of the lookup process, but it is the basis of how Chord theoretically works.
 
-To speed up the lookup time, each node stores not just its successor, but also the locations of up to $m$ other nodes in the network a \emph{finger table}.  The $i$th entry of node $n$'s \emph{finger table} will be the location of $successor(n+2^{i-1})$ $mod$ $2^m$\footnote{Because hash values won't be perfectly distributed, it is perfectly acceptable to have duplicate entries in the \emph{finger table}}. When a node $n$ is told to find some key, $n$ looks to see if the key is between $n$ and $successor(n)$ and return $successor(n)$'s information to the requester. If not, it looks for the entry in the finger table for the closest preceding node $n'$ it knows and asks $n'$ to find the successor.  This allows each step in the to skip up to half the nodes in the network, giving a $\log_2(n)$ lookup time.   The code for these processes used for the simulation are shown in ALGORITHM SOMETHING OR ANOTHER.
+To speed up the lookup time, each node stores not just its successor, but also the locations of up to $m$ other nodes in the network a \emph{finger table}.  The $i$th entry of node $n$'s \emph{finger table} will be the location of $successor(n+2^{i-1})$ $mod$ $2^m$\footnote{Because hash values won't be perfectly distributed, it is perfectly acceptable to have duplicate entries in the \emph{finger table}}. When a node $n$ is told to find some key, $n$ looks to see if the key is between $n$ and $successor(n)$ and return $successor(n)$'s information to the requester. If not, it looks for the entry in the finger table for the closest preceding node $n'$ it knows and asks $n'$ to find the successor.  This allows each step in the to skip up to half the nodes in the network, giving a $\log_2(n)$ lookup time.   %The code for these processes used for the simulation are shown in ALGORITHM SOMETHING OR ANOTHER.
 
-Because nodes can constantly join and leave the network, maintenance is essential to keeping the finger tables accurate.  For 
+Because nodes can constantly join and leave the network, maintenance is essential to keeping the finger tables accurate.  To join the network, node $n$ asks $n'$ to find $successor(n)$ for it.  Once in the network, $n$ will periodically update entries in his finger tables.  In order to adjust for other nodes entering the network, each node $n$ periodically asks $successor(n)$ for its predecessor. 
 
 Further details and the specifics of maintenance and protocol can be found in Stioca et al.'s paper on Chord \cite{Chord}.
 
@@ -64,8 +64,14 @@ It is important that our latency for this simulation be varied, but only so that
 
 \section{Developed Models}
 
+Our model uses four types of agents: nodes, links representing connections between the nodes, seekers, and updates.  Seekers and updates are turtles that represent the messages being passed along the network.
+
+The simulation starts by generating a specified number of nodes, which can be arranged into a ring if desired.  While the ring shape is optional, it is highly recommended as it better displays the connections in the network.  Most nodes begin disconnected from any ring, with a few (again, the exact number specified as part of the simulation parameters) creating a ring.  If a node $n$ can see another node $n'$ that is a member of a ring, $n$ will join  $n'$'s ring\footnote{In the event detecting of multiple nodes $n'$, the closest is chosen}. 
+
+In our simulation, rather than calling nodes with functions, as would be the case in C or Java, we send messages to the nodes that we want to perform tasks. Specifically, we send \emph{seekers} to find successors of a hash-id, and use emph{updates} to respond to them.  When a node detects a seeker or update destined for itself, it responds accordingly.  Handling a seeker entails either sending an update containing the desired successor back to the original sender, or sending a new seeker to the closest preceding node.  To handle an update, a node updates its the corresponding slot in its finger table to the new node\footnote{To update the successor is the same as updating the first entry in the finger table}.
 
 
+Of note is that messages do not always travel along the links.  Seekers use the links except when a node is trying to join a ring;  in this case, there is no link that exists for the seeker to use. Updates, on the other hand, never have to use the links because it is assumes a direct connection between the node requesting an update and the node sending the update.
 
 \begin{lstlisting}
 to go
