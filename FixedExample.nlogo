@@ -249,6 +249,8 @@ to join-node [n];;node procedure to join node n's ring
 end
 
 to join-better-ring [n]
+  if fix-problem
+  [
   set in-ring [in-ring] of n
   set pred nobody
   set suc n
@@ -268,6 +270,7 @@ to join-better-ring [n]
     set in-ring [in-ring] of n
     face dest
     ;; print dest
+  ]
   ]
   
 end
@@ -483,7 +486,6 @@ end
 ;  ]
 ;  ask msg [die]
 ;en
-
 @#$#@#$#@
 GRAPHICS-WINDOW
 279
@@ -684,7 +686,7 @@ inital-seeds
 inital-seeds
 1
 10
-4
+10
 1
 1
 nodes
@@ -715,6 +717,17 @@ count nodes with [suc != item 0 fingers]
 17
 1
 11
+
+SWITCH
+13
+182
+133
+215
+Fix-problem
+Fix-problem
+0
+1
+-1000
 
 @#$#@#$#@
 ## WHAT IS IT?
@@ -1078,7 +1091,7 @@ Polygon -7500403 true true 270 75 225 30 30 225 75 270
 Polygon -7500403 true true 30 75 75 30 270 225 225 270
 
 @#$#@#$#@
-NetLogo 5.0.4
+NetLogo 5.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
