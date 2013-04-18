@@ -41,7 +41,7 @@ end
 to init-props
   set suc nobody
   set pred nobody
-  set in-ring? false
+  set in-ring? -1
   set shape "circle"
   set xcor (random (max-pxcor * 2)) - max-pxcor
   set ycor (random (max-pycor * 2)) - max-pycor
@@ -86,9 +86,9 @@ to handle-messages
 end
 
 to maintenance
-  ask nodes with [in-ring? = false] 
+  ask nodes with [in-ring? = -1] 
   [
-    if any? ((nodes in-radius Radius) with [in-ring? = true])
+    if any? ((nodes in-radius Radius) with [in-ring? > -1])
     [
       join-closest
     ]
@@ -96,7 +96,7 @@ to maintenance
      
   every Update-Frequency
   [
-    ask nodes with [in-ring? = true]
+    ask nodes with [in-ring? > -1]
     [
       stabalize
       fix-fingers
@@ -169,7 +169,7 @@ to create-network  ;; create an empty chord ring
   ;; print self
   set pred nobody 
   set suc self
-  set in-ring? true
+  set in-ring? random 10000
   init-fingers
 end
 
@@ -178,7 +178,7 @@ end
 ;;;change for in-ring?
 to join-closest ;; node procedure
   ;join-node min-one-of other (nodes with [in-ring? = false]) [distance myself]
-  let n one-of nodes with [in-ring? = true]
+  let n one-of nodes with [in-ring? > -1]
   ;; print [in-ring?] of n 
   join-node n
 end
@@ -282,9 +282,10 @@ to receive-update [msg]
   if myslot = 0 [set suc [connectTo] of msg]
   rebuild-links
   
-  ask msg [die]
+  
  ; connectTo dest slot
-  set in-ring? true
+  set in-ring? [in-ring?] of [connectTo] of msg
+  ask msg [die]
 end
 
 to rebuild-links
@@ -293,6 +294,11 @@ to rebuild-links
   [
     if ? != nobody and ? != self [ create-link-to ?]
   ]
+  ask my-out-links [
+    set color ([in-ring?] of myself mod 399)
+    ]
+    
+    
 end
 
 
