@@ -490,10 +490,10 @@ end
 GRAPHICS-WINDOW
 279
 10
-900
-626
-23
-22
+1082
+834
+30
+30
 13.0
 1
 10
@@ -504,10 +504,10 @@ GRAPHICS-WINDOW
 0
 0
 1
--23
-23
--22
-22
+-30
+30
+-30
+30
 0
 0
 1
@@ -538,7 +538,7 @@ Hash_Degree
 Hash_Degree
 4
 20
-14
+20
 1
 1
 NIL
@@ -553,7 +553,7 @@ Population
 Population
 0
 100
-16
+50
 1
 1
 NIL
@@ -686,7 +686,7 @@ inital-seeds
 inital-seeds
 1
 10
-10
+5
 1
 1
 nodes
@@ -701,7 +701,7 @@ Absorb-Frequency
 Absorb-Frequency
 1
 20
-5
+2
 0.25
 1
 NIL
@@ -1095,6 +1095,36 @@ NetLogo 5.0.3
 @#$#@#$#@
 @#$#@#$#@
 @#$#@#$#@
+<experiments>
+  <experiment name="Simple_test" repetitions="100" runMetricsEveryStep="true">
+    <setup>setup</setup>
+    <go>go</go>
+    <timeLimit steps="300"/>
+    <metric>count links</metric>
+    <enumeratedValueSet variable="Fix-problem">
+      <value value="false"/>
+      <value value="true"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Radius">
+      <value value="62"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Update-Frequency">
+      <value value="0.5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Hash_Degree">
+      <value value="20"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="inital-seeds">
+      <value value="5"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Population">
+      <value value="50"/>
+    </enumeratedValueSet>
+    <enumeratedValueSet variable="Absorb-Frequency">
+      <value value="2"/>
+    </enumeratedValueSet>
+  </experiment>
+</experiments>
 @#$#@#$#@
 @#$#@#$#@
 default
