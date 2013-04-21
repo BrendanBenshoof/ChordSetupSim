@@ -1,0 +1,29 @@
+Using metrics to discuss our sucess is difficult. An ovious metric like the number of distinct sub-rings proves our technique
+works, but does not give us any information beyond that. In the un-altered
+simulation the number of rings stays constant and in the modified behavoir
+it linearly reduces to one. The major metrics
+of number of links and average travel time both fall into normal ranges
+when the undesried behavoir occurs. Each node has a constant number of 
+links the expected number of links (nodes * number of links * density). 
+this number of links is unaffected by our undesired behavoir as the total density
+of the ideal ring is equal to the sum of the densities of the sub-rings. 
+Travel time for messages is unaffected as each sub-ring has sections that
+maintain the entire hash space, thus a message will be replied to, just
+by the wrong node.
+
+The metrics we found to be of interest is the rate of link creation
+and varience in the number of links over time. We found after running 
+100 simulations for each algorithim the the "end behavoir" of the number of
+links metrics was idential, finding a ceiling at around 300 links, but 
+the behavoir of each line differed greatly. The un-altered algorithim gave
+us an O(1/x) behavoir which asymtotically approaches the expected
+300 links. The altered algorithim however gave us a linear growth which
+ceilinged at the expected 300 links maximum. This is caused by by a 
+compoent of the new algorithim that when a node changed rings it had to
+destroy all of it's current links. this loss appears to cancel out the 
+curve-behavoir of the unaltered algorithim. The varience of the 
+unlatered-algorithim was greater at every point in time then the altered
+algorithim in increased over time. This indicates the unaltered algorithim's behavoir was heavily
+influenced by the random starting conditions of the simulation where the
+constant variance of the altered algorithim indicated it is more stable
+in respect to starting topology. 
