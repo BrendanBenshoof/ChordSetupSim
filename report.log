@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  21 APR 2013 20:09
+This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  21 APR 2013 20:54
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -501,15 +501,15 @@ e
 ))
 \c@lstlisting=\count105
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <12> on input line 33.
+(Font)              <12> on input line 31.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <8> on input line 33.
+(Font)              <8> on input line 31.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <6> on input line 33.
+(Font)              <6> on input line 31.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <9> on input line 38.
+(Font)              <9> on input line 36.
 LaTeX Font Info:    External font `cmex10' loaded for size
-(Font)              <5> on input line 38.
+(Font)              <5> on input line 36.
 
 <chordreal.png, id=1, 586.8324pt x 525.4029pt>
 File: chordreal.png Graphic file (type png)
@@ -518,49 +518,54 @@ x.map}
 
 
  <./chordreal.png>]
-LaTeX Font Info:    Try loading font information for T1+fvm on input line 79.
+LaTeX Font Info:    Try loading font information for T1+fvm on input line 80.
 
 (c:/texlive/2010/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
 )
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
-(Font)              scaled to size 8.09995pt on input line 79.
-LaTeX Font Info:    Font shape `T1/fvm/bx/n' in size <9> not available
-(Font)              Font shape `T1/fvm/b/n' tried instead on input line 80.
-LaTeX Font Info:    Font shape `T1/fvm/b/n' will be
 (Font)              scaled to size 8.09995pt on input line 80.
+LaTeX Font Info:    Font shape `T1/fvm/bx/n' in size <9> not available
+(Font)              Font shape `T1/fvm/b/n' tried instead on input line 81.
+LaTeX Font Info:    Font shape `T1/fvm/b/n' will be
+(Font)              scaled to size 8.09995pt on input line 81.
  [2]
-<example_problem.png, id=23, 460.72125pt x 443.40656pt>
+LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
+(Font)              scaled to size 10.79993pt on input line 87.
+
+<example_problem.png, id=21, 460.72125pt x 443.40656pt>
 File: example_problem.png Graphic file (type png)
 
-<use example_problem.png> <fixed_example.png, id=24, 466.74374pt x 464.4853pt>
+<use example_problem.png> <fixed_example.png, id=22, 466.74374pt x 464.4853pt>
 File: fixed_example.png Graphic file (type png)
 
-<use fixed_example.png> (./report.bbl) [3 <./example_problem.png (PNG copy)> <.
-/fixed_example.png (PNG copy)>] (./report.aux) ) 
+<use fixed_example.png> (./report.bbl [3]) [4
+
+ <./example_problem.png (PNG copy)> <./fixed_example.png (PNG copy)>] (./report
+.aux) ) 
 Here is how much of TeX's memory you used:
- 4539 strings out of 493763
- 62932 string characters out of 3148266
- 151257 words of memory out of 3000000
- 7773 multiletter control sequences out of 15000+200000
- 101963 words of font info for 112 fonts, out of 3000000 for 9000
+ 4574 strings out of 493763
+ 63285 string characters out of 3148266
+ 256309 words of memory out of 3000000
+ 7808 multiletter control sequences out of 15000+200000
+ 102284 words of font info for 113 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 38i,8n,41p,942b,1578s stack positions out of 5000i,500n,10000p,200000b,50000s
-{c:/texlive/2010/texmf-dist/fon
-ts/enc/dvips/base/8r.enc}<c:/texlive/2010/texmf-dist/fonts/type1/public/amsfont
-s/cm/cmmi12.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi
-8.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi9.pfb><c:/
-texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/20
-10/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2010/texmf-di
-st/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/texlive/2010/texmf-dist/fonts/t
-ype1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2010/texmf-dist/fonts/type1/publi
-c/bera/fvmb8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/bera/fvmr8a.pf
-b><c:/texlive/2010/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><c:/texlive/2010
-/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on report.pdf (3 pages, 437556 bytes).
+ 38i,8n,41p,942b,1814s stack positions out of 5000i,500n,10000p,200000b,50000s
+{c:/texlive/2010/texmf-dist/fonts/enc/dvips/base/8r.enc}<c:/texlive/2010
+/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi12.pfb><c:/texlive/2010/texmf-di
+st/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c:/texlive/2010/texmf-dist/fonts/t
+ype1/public/amsfonts/cm/cmmi9.pfb><c:/texlive/2010/texmf-dist/fonts/type1/publi
+c/amsfonts/cm/cmr12.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts
+/cm/cmr8.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.
+pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy6.pfb><c:/te
+xlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2010
+/texmf-dist/fonts/type1/public/bera/fvmb8a.pfb><c:/texlive/2010/texmf-dist/font
+s/type1/public/bera/fvmr8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/urw/time
+s/utmr8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on report.pdf (4 pages, 449812 bytes).
 PDF statistics:
- 64 PDF objects out of 1000 (max. 8388607)
- 43 compressed objects within 1 object stream
+ 71 PDF objects out of 1000 (max. 8388607)
+ 48 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  16 words of extra memory for PDF output out of 10000 (max. 10000000)
 
