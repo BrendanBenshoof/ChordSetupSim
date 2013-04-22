@@ -1,5 +1,16 @@
 \begin{thebibliography}{1}
 
+\bibitem{BitTorrent}
+R.~Jimenez, F.~Osmani, and B.~Knutsson.
+\newblock Connectivity properties of mainline bittorrent dht nodes.
+\newblock In {\em Peer-to-Peer Computing, 2009. P2P '09. IEEE Ninth
+  International Conference on}, pages 262 --270, sept. 2009.
+
+\bibitem{Kademlia}
+Petar Maymounkov and David Mazières.
+\newblock Kademlia: A peer-to-peer information system based on the xor metric,
+  2002.
+
 \bibitem{Chord}
 Ion Stoica, Robert Morris, David Karger, M.~Frans Kaashoek, and Hari
   Balakrishnan.
