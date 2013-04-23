@@ -1,0 +1,131 @@
+\documentclass{beamer}
+
+\mode<presentation>
+{
+  \usetheme{Warsaw}
+  % or ...
+
+  \setbeamercovered{transparent}
+  % or whatever (possibly just delete it)
+}
+
+
+\usepackage[english]{babel}
+% or whatever
+
+\usepackage[utf8]{inputenc}
+% or whatever
+
+\usepackage{times}
+\usepackage[T1]{fontenc}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+
+
+\title{Simulation of the Nomification of Independent Chord Rings}
+\author{Andrew Rosen \qquad Brendan Benshoof }
+\date{} % Activate to display a given date or no date (if empty),
+         % otherwise the current date is printed 
+         
+
+
+% If you wish to uncover everything in a step-wise fashion, uncomment
+% the following command: 
+
+%\beamerdefaultoverlayspecification{<+->}
+
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Outline}
+  \tableofcontents
+  % You might wish to add the option [pausesections]
+\end{frame}
+
+\section{Goals of Modeling and Simulation}
+
+\subsection{Problem Space}
+
+\begin{frame}{File Lookup}
+	\begin{itemize}
+		\item Most important function of a decentralized Peer-to-Peer system.
+		\item Need to discover which node in the network has a certain file.
+		\item Need to do it efficiently.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{Hashing Protocols}
+	\begin{itemize}
+		\item One of the best solutions for this task.
+		\item Map nodes and files identifiers to keys.
+		\item Nodes are responsible for files with keys that match some criteria,.
+		\item Imposes an structure on the network.
+	\end{itemize}
+
+\end{frame}
+
+
+\subsection{Chord}
+
+\begin{frame}{What is Chord}
+	\begin{itemize}
+		\item Arranges a network into a ring.
+		\item Maximum $2^m$ nodes in the network.
+		\item Nodes and filenames are hashed to create an $m$-bit key.
+	\end{itemize}
+
+\end{frame}
+
+\begin{frame}{How Are Files Stored}
+\begin{center}\includegraphics[scale=0.25]{chordreal}\end{center}
+	\begin{itemize}
+		\item Arranges a network into a ring.
+		\item Maximum $2^m$ nodes in the network.
+		\item Nodes and filenames are hashed to create an $m$-bit key.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{How Are Files Retrieved}
+	\begin{itemize}
+		\item Arranges a network into a ring.
+		\item Maximum $2^m$ nodes in the network.
+		\item Nodes and filenames are hashed to create an $m$-bit key.
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}{How Is Churn Handled}
+	\begin{itemize}
+		\item Arranges a network into a ring.
+		\item Maximum $2^m$ nodes in the network.
+		\item Nodes and filenames are hashed to create an $m$-bit key.
+	\end{itemize}
+
+\end{frame}
+
+
+\section{Developed Models} 
+
+\section{Experiments and Results}
+
+
+\section{Conclusion and Future Work}
+
+\begin{frame}{Make Titles Informative. Use Uppercase Letters.}{Subtitles are optional.}
+
+\end{frame}
+
+
+
+\end{document}
+
+
