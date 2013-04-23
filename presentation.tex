@@ -22,7 +22,7 @@
 % does not look nice, try deleting the line with the fontenc.
 
 
-\title{Simulation of the Nomification of Independent Chord Rings}
+\title{Simulation of the Merge of Independent Chord Rings}
 \author{Andrew Rosen \qquad Brendan Benshoof }
 \date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
@@ -119,8 +119,9 @@
 \end{frame}
 
 \subsection{Goals}
-What happens:
+
 \begin{frame}{Goals}
+What happens:
 	\begin{itemize}
 		\item If there is more than one initial ring?
 		\item If our range of sight is limited?
@@ -139,8 +140,11 @@ What happens:
 \begin{frame}{Agents}
 	\begin{itemize}
 		\item Nodes for nodes, Links for links.
-		\item Seekers.
-		\item Updates.
+		\item Messages are represented by:
+		\begin{itemize}
+			\item Seekers.
+			\item Updates.
+		\end{itemize}
 	\end{itemize}
 \end{frame}
 
@@ -155,16 +159,79 @@ What happens:
 	\end{itemize}
 \end{frame}
 
+\begin{frame}{Creating Rings}
+	\begin{itemize}
+		\item Nodes not in a ring look within a radius for nodes in a ring
+		\item Nodes then join the closest ring.
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}{Creating Rings}
+	\begin{figure}
+		\includegraphics[scale=0.33]{example_problem}
+		\caption{A chord network with multiple rings.  Rings are differentiated by color.}
+		\label{problem}
+	\end{figure}
+\end{frame}
+
+
+
 \subsection{Ouroboros Inaction}
+
+\begin{frame}{Joining new Rings}
+	\begin{itemize}
+		\item Nodes periodically invite a new node to the ring.
+		\item Nodes accept the invitation if the new ring is "better."
+		\item Accepting the invitation means joining like any new node.
+	\end{itemize}
+\end{frame}
 
 
 
 \section{Experiments and Results}
 
+\subsection{Setup}
+
+\begin{frame}{Setup}
+	\begin{itemize}
+		\item 200 simulations
+		\begin{itemize}
+			\item 100 without any joining mechanism
+			\item 100 with our joining mechanism.
+		\end{itemize}
+		\item Recorded the number of links over time.
+		\item Analyzed for the mean and variance.
+	\end{itemize}
+\end{frame}
+
+
+
+\subsection{Results}
+
+\begin{frame}{Results}
+\begin{figure}
+	\includegraphics[scale=0.2]{chart1}
+	\caption{The unfixed simulation causes nodes to form links more rapidly.  This is because nodes are not joining other rings, which would cut the number of links even as more nodes were discovered.}
+	\label{chart1}
+\end{figure}
+
+\end{frame}
+
+
+\begin{frame}{Results}
+
+\begin{figure}
+	\includegraphics[width=0.7\linewidth]{chart2}
+	\caption{The difference in the number of links in the rings varies wildly when nodes don't join new rings. This is expected from the extremely fast creation of links.  In the fixed network, joins keep the amount of links down to a steady number. }
+	\label{chart2}
+\end{figure}
+
+\end{frame}
 
 \section{Conclusion and Future Work}
 
-\begin{frame}{Stuff}
+\begin{frame}{Conclusion}
 
 \end{frame}
 

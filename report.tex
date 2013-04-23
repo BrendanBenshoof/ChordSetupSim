@@ -185,14 +185,14 @@ The metrics we found to be of interest is the rate of link creation and variance
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{chart1}
-	\caption{Caption}
+	\caption{The unfixed simulation causes nodes to form links more rapidly.  This is because nodes are not joining other rings, which would cut the number of links even as more nodes were discovered.  Eventually, all nodes are in exclusive rings, which accounts for the slower section of growth.}
 	\label{chart1}
 \end{figure}
 
 
 \begin{figure}
 	\includegraphics[width=\linewidth]{chart2}
-	\caption{Caption}
+	\caption{The difference in the number of links in the rings varies wildly when nodes don't join new rings. This is expected from the extremely fast creation of links.  In the fixed network, joins keep the amount of links down to a steady number. }
 	\label{chart2}
 \end{figure}
 
@@ -206,14 +206,14 @@ Our next plans are to take what we have learned from this paper and apply it to 
 
 \begin{figure}
 \includegraphics[width=\linewidth]{example_problem}
-\caption{ADD CAPTION}
+\caption{A chord network with multiple rings.  Rings are differentiated by color.}
 \label{problem}
 \end{figure}
 
 
 \begin{figure}
 \includegraphics[width=\linewidth]{fixed_example}
-\caption{MOAR CAPTION}
+\caption{A chord network where all the nodes have joined a single ring.}
 \label{fixed}
 \end{figure}
 
