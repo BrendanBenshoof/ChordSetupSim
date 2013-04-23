@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.1415926-2.2-0.9997.4 (Web2C 2010) (format=xelatex 2011.2.15)  22 APR 2013 21:28
+This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  22 APR 2013 21:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -20,14 +20,14 @@ Document Class: article 2007/10/19 v1.4h Standard LaTeX document class
 (c:/texlive/2010/texmf-dist/tex/latex/base/size12.clo
 File: size12.clo 2007/10/19 v1.4h Standard LaTeX file (size option)
 )
-\c@part=\count80
-\c@section=\count81
-\c@subsection=\count82
-\c@subsubsection=\count83
-\c@paragraph=\count84
-\c@subparagraph=\count85
-\c@figure=\count86
-\c@table=\count87
+\c@part=\count79
+\c@section=\count80
+\c@subsection=\count81
+\c@subsubsection=\count82
+\c@paragraph=\count83
+\c@subparagraph=\count84
+\c@figure=\count85
+\c@table=\count86
 \abovecaptionskip=\skip41
 \belowcaptionskip=\skip42
 \bibindent=\dimen102
@@ -265,11 +265,11 @@ Package: trig 1999/03/16 v1.09 sin cos tan (DPC)
 (c:/texlive/2010/texmf-dist/tex/latex/latexconfig/graphics.cfg
 File: graphics.cfg 2010/04/23 v1.9 graphics configuration of TeX Live
 )
-Package graphics Info: Driver file: xetex.def on input line 91.
+Package graphics Info: Driver file: pdftex.def on input line 91.
 
-(c:/texlive/2010/texmf-dist/tex/xelatex/xetex-def/xetex.def
-File: xetex.def 2009/11/22 v0.94 LaTeX color/graphics driver for XeTeX (RRM/JK)
-
+(c:/texlive/2010/texmf-dist/tex/latex/pdftex-def/pdftex.def
+File: pdftex.def 2011/01/28 v0.05d Graphics/color for pdfTeX
+\Gread@gobject=\count87
 ))
 \Gin@req@height=\dimen103
 \Gin@req@width=\dimen104
@@ -317,8 +317,7 @@ File: lstlang2.sty 2004/09/05 1.3 listings language file
 )
 (c:/texlive/2010/texmf-dist/tex/latex/listings/lstlang3.sty
 File: lstlang3.sty 2004/09/05 1.3 listings language file
-)
-No file report.aux.
+) (./report.aux)
 \openout1 = `report.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 26.
@@ -333,53 +332,85 @@ LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
 LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 26.
 LaTeX Font Info:    ... okay on input line 26.
-\c@lstlisting=\count96
+
+(c:/texlive/2010/texmf-dist/tex/context/base/supp-pdf.mkii
+[Loading MPS to PDF converter (version 2006.09.02).]
+\scratchcounter=\count96
+\scratchdimen=\dimen109
+\scratchbox=\box28
+\nofMPsegments=\count97
+\nofMParguments=\count98
+\everyMPshowfont=\toks18
+\MPscratchCnt=\count99
+\MPscratchDim=\dimen110
+\MPnumerator=\count100
+\everyMPtoPDFconversion=\toks19
+) (c:/texlive/2010/texmf-dist/tex/generic/oberdiek/pdftexcmds.sty
+Package: pdftexcmds 2010/04/01 v0.9 Utility functions of pdfTeX for LuaTeX (HO)
+
+
+(c:/texlive/2010/texmf-dist/tex/generic/oberdiek/infwarerr.sty
+Package: infwarerr 2010/04/08 v1.3 Providing info/warning/message (HO)
+)
+(c:/texlive/2010/texmf-dist/tex/generic/oberdiek/ifluatex.sty
+Package: ifluatex 2010/03/01 v1.3 Provides the ifluatex switch (HO)
+Package ifluatex Info: LuaTeX not detected.
+)
+(c:/texlive/2010/texmf-dist/tex/generic/oberdiek/ltxcmds.sty
+Package: ltxcmds 2010/04/26 v1.7 LaTeX kernel commands for general use (HO)
+)
+Package pdftexcmds Info: LuaTeX not detected.
+Package pdftexcmds Info: \pdf@primitive is available.
+Package pdftexcmds Info: \pdf@ifprimitive is available.
+)
+(c:/texlive/2010/texmf-dist/tex/latex/oberdiek/epstopdf-base.sty
+Package: epstopdf-base 2010/02/09 v2.5 Base part for package epstopdf
+
+(c:/texlive/2010/texmf-dist/tex/latex/oberdiek/grfext.sty
+Package: grfext 2007/09/30 v1.0 Managing graphics extensions (HO)
+)
+(c:/texlive/2010/texmf-dist/tex/latex/oberdiek/kvoptions.sty
+Package: kvoptions 2010/02/22 v3.7 Keyval support for LaTeX options (HO)
+
+(c:/texlive/2010/texmf-dist/tex/generic/oberdiek/kvsetkeys.sty
+Package: kvsetkeys 2010/03/01 v1.9 Key value parser (HO)
+
+(c:/texlive/2010/texmf-dist/tex/generic/oberdiek/etexcmds.sty
+Package: etexcmds 2010/01/28 v1.3 Prefix for e-TeX command names (HO)
+Package etexcmds Info: Could not find \expanded.
+(etexcmds)             That can mean that you are not using pdfTeX 1.50 or
+(etexcmds)             that some package has redefined \expanded.
+(etexcmds)             In the latter case, load this package earlier.
+)))
+Package grfext Info: Graphics extension search list:
+(grfext)             [.png,.pdf,.jpg,.mps,.jpeg,.jbig2,.jb2,.PNG,.PDF,.JPG,.JPE
+G,.JBIG2,.JB2,.eps]
+(grfext)             \AppendGraphicsExtensions on input line 436.
+
+(c:/texlive/2010/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Liv
+e
+))
+\c@lstlisting=\count101
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <14.4> on input line 27.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <7> on input line 27.
-[1
+ [1
 
-]
-
-LaTeX Warning: Citation `Chord' on page 2 undefined on input line 31.
-
+{c:/texlive/2010/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <12> on input line 31.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <8> on input line 31.
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <6> on input line 31.
-
-LaTeX Warning: Citation `Kademlia' on page 2 undefined on input line 33.
-
-
-LaTeX Warning: Citation `BitTorrent' on page 2 undefined on input line 33.
-
-
-LaTeX Warning: Citation `Chord' on page 2 undefined on input line 33.
-
-
-LaTeX Warning: Citation `Chord' on page 2 undefined on input line 36.
-
 LaTeX Font Info:    External font `cmex10' loaded for size
 (Font)              <5> on input line 36.
 
-LaTeX Warning: Reference `chordreal' on page 2 undefined on input line 38.
-
-File: chordreal.png Graphic file (type QTm)
-<use  "chordreal.png" > [2] [3]
-
-LaTeX Warning: Citation `Chord' on page 4 undefined on input line 54.
-
-[4]
-
-LaTeX Warning: Reference `go' on page 5 undefined on input line 75.
-
-
-LaTeX Warning: Reference `maint' on page 5 undefined on input line 78.
-
-[5]
+<chordreal.png, id=9, 586.8324pt x 525.4029pt>
+File: chordreal.png Graphic file (type png)
+ <use chordreal.png> [2] [3 <./chordreal.png>] [4] [5]
 LaTeX Font Info:    Try loading font information for T1+fvm on input line 80.
  (c:/texlive/2010/texmf-dist/tex/latex/bera/t1fvm.fd
 File: t1fvm.fd 2004/09/07 scalable font definitions for T1/fvm.
@@ -393,30 +424,52 @@ LaTeX Font Info:    Font shape `T1/fvm/b/n' will be
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
 (Font)              scaled to size 10.79993pt on input line 87.
 
+[6] [7] <chart1.png, id=48, 994.71625pt x 647.41875pt>
+File: chart1.png Graphic file (type png)
+ <use chart1.png>
+<chart2.png, id=49, 989.6975pt x 641.39626pt>
+File: chart2.png Graphic file (type png)
+ <use chart2.png> [8 <./chart1.png (PNG copy)>] [9 <./chart2.png (PNG copy)>]
+<example_problem.png, id=58, 460.72125pt x 443.40656pt>
+File: example_problem.png Graphic file (type png)
 
-LaTeX Warning: Citation `Chord' on page 6 undefined on input line 90.
+<use example_problem.png> <fixed_example.png, id=59, 466.74374pt x 464.4853pt>
+File: fixed_example.png Graphic file (type png)
 
-[6] [7]
-! Unable to load picture or PDF file 'chart1.gif'.
-<to be read again> 
-                   }
-l.183 ...includegraphics[width=\linewidth]{chart1}
-                                                  
-? 
-! Emergency stop.
-<to be read again> 
-                   }
-l.183 ...includegraphics[width=\linewidth]{chart1}
-                                                  
-End of file on the terminal!
-
- 
+<use fixed_example.png> (./report.bbl) [10] [11 <./example_problem.png (PNG cop
+y)>] [12 <./fixed_example.png (PNG copy)>] (./report.aux) ) 
 Here is how much of TeX's memory you used:
- 3024 strings out of 494522
- 36549 string characters out of 3159442
- 175837 words of memory out of 3000000
- 6266 multiletter control sequences out of 15000+200000
- 17317 words of font info for 41 fonts, out of 3000000 for 9000
- 670 hyphenation exceptions out of 8191
- 26i,8n,41p,942b,1620s stack positions out of 5000i,500n,10000p,200000b,50000s
-Output written on report.pdf (7 pages).
+ 3841 strings out of 493763
+ 49180 string characters out of 3148266
+ 194966 words of memory out of 3000000
+ 7087 multiletter control sequences out of 15000+200000
+ 17139 words of font info for 42 fonts, out of 3000000 for 9000
+ 715 hyphenation exceptions out of 8191
+ 38i,8n,41p,942b,1620s stack positions out of 5000i,500n,10000p,200000b,50000s
+{c:/texlive/2010/tex
+mf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2010/texmf-dist/fonts/enc/dvips
+/cm-super/cm-super-t1.enc}<c:/texlive/2010/texmf-dist/fonts/type1/public/amsfon
+ts/cm/cmmi10.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmm
+i12.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c
+:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/
+2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2010/texmf-
+dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2010/texmf-dist/font
+s/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2010/texmf-dist/fonts/type1/pu
+blic/amsfonts/cm/cmsy8.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/bera/
+fvmb8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb><c:/t
+exlive/2010/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/texlive/201
+0/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb><c:/texlive/2010/texmf-di
+st/fonts/type1/public/cm-super/sfrm0700.pfb><c:/texlive/2010/texmf-dist/fonts/t
+ype1/public/cm-super/sfrm0800.pfb><c:/texlive/2010/texmf-dist/fonts/type1/publi
+c/cm-super/sfrm1000.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super
+/sfrm1200.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfrm1440.
+pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb><c:/te
+xlive/2010/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb><c:/texlive/2010
+/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
+Output written on report.pdf (12 pages, 620775 bytes).
+PDF statistics:
+ 134 PDF objects out of 1000 (max. 8388607)
+ 91 compressed objects within 1 object stream
+ 0 named destinations out of 1000 (max. 500000)
+ 26 words of extra memory for PDF output out of 10000 (max. 10000000)
+
