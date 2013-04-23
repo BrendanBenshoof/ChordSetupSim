@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  22 APR 2013 21:34
+This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  22 APR 2013 22:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -424,52 +424,56 @@ LaTeX Font Info:    Font shape `T1/fvm/b/n' will be
 LaTeX Font Info:    Font shape `T1/fvm/m/n' will be
 (Font)              scaled to size 10.79993pt on input line 87.
 
-[6] [7] <chart1.png, id=48, 994.71625pt x 647.41875pt>
+[6] [7] [8] <chart1.png, id=51, 994.71625pt x 647.41875pt>
 File: chart1.png Graphic file (type png)
  <use chart1.png>
-<chart2.png, id=49, 989.6975pt x 641.39626pt>
+<chart2.png, id=52, 989.6975pt x 641.39626pt>
 File: chart2.png Graphic file (type png)
- <use chart2.png> [8 <./chart1.png (PNG copy)>] [9 <./chart2.png (PNG copy)>]
-<example_problem.png, id=58, 460.72125pt x 443.40656pt>
+ <use chart2.png>
+<example_problem.png, id=53, 460.72125pt x 443.40656pt>
 File: example_problem.png Graphic file (type png)
 
-<use example_problem.png> <fixed_example.png, id=59, 466.74374pt x 464.4853pt>
+<use example_problem.png> <fixed_example.png, id=54, 466.74374pt x 464.4853pt>
 File: fixed_example.png Graphic file (type png)
 
-<use fixed_example.png> (./report.bbl) [10] [11 <./example_problem.png (PNG cop
-y)>] [12 <./fixed_example.png (PNG copy)>] (./report.aux) ) 
+<use fixed_example.png> (./report.bbl [9] [10 <./chart1.png (PNG copy)>]
+[11 <./chart2.png (PNG copy)>] [12 <./example_problem.png (PNG copy)>] [13 <./f
+ixed_example.png (PNG copy)>]) [14] (./report.aux)
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
+ ) 
 Here is how much of TeX's memory you used:
  3841 strings out of 493763
  49180 string characters out of 3148266
- 194966 words of memory out of 3000000
+ 184966 words of memory out of 3000000
  7087 multiletter control sequences out of 15000+200000
  17139 words of font info for 42 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
- 38i,8n,41p,942b,1620s stack positions out of 5000i,500n,10000p,200000b,50000s
-{c:/texlive/2010/tex
-mf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2010/texmf-dist/fonts/enc/dvips
-/cm-super/cm-super-t1.enc}<c:/texlive/2010/texmf-dist/fonts/type1/public/amsfon
-ts/cm/cmmi10.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmm
-i12.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb><c
-:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb><c:/texlive/
-2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><c:/texlive/2010/texmf-
-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texlive/2010/texmf-dist/font
-s/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2010/texmf-dist/fonts/type1/pu
-blic/amsfonts/cm/cmsy8.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/bera/
-fvmb8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/bera/fvmr8a.pfb><c:/t
-exlive/2010/texmf-dist/fonts/type1/public/cm-super/sfbx1440.pfb><c:/texlive/201
-0/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb><c:/texlive/2010/texmf-di
-st/fonts/type1/public/cm-super/sfrm0700.pfb><c:/texlive/2010/texmf-dist/fonts/t
-ype1/public/cm-super/sfrm0800.pfb><c:/texlive/2010/texmf-dist/fonts/type1/publi
-c/cm-super/sfrm1000.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super
-/sfrm1200.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfrm1440.
-pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfrm2074.pfb><c:/te
-xlive/2010/texmf-dist/fonts/type1/public/cm-super/sfti1000.pfb><c:/texlive/2010
-/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
-Output written on report.pdf (12 pages, 620775 bytes).
+ 38i,8n,41p,1121b,1620s stack positions out of 5000i,500n,10000p,200000b,50000s
+{c:/texlive/2010/texmf-dist/fonts/enc/dvips/base/8r.enc}{c:/texlive/2010/texm
+f-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}<c:/texlive/2010/texmf-dist/fon
+ts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2010/texmf-dist/fonts/type1/
+public/amsfonts/cm/cmmi12.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/am
+sfonts/cm/cmmi8.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/
+cmr12.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb><
+c:/texlive/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><c:/texliv
+e/2010/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><c:/texlive/2010/tex
+mf-dist/fonts/type1/public/amsfonts/cm/cmsy8.pfb><c:/texlive/2010/texmf-dist/fo
+nts/type1/public/bera/fvmb8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public
+/bera/fvmr8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfbx14
+40.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfbx1728.pfb><c:
+/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb><c:/texlive/2
+010/texmf-dist/fonts/type1/public/cm-super/sfrm0800.pfb><c:/texlive/2010/texmf-
+dist/fonts/type1/public/cm-super/sfrm1000.pfb><c:/texlive/2010/texmf-dist/fonts
+/type1/public/cm-super/sfrm1200.pfb><c:/texlive/2010/texmf-dist/fonts/type1/pub
+lic/cm-super/sfrm1440.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-sup
+er/sfrm2074.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfti100
+0.pfb><c:/texlive/2010/texmf-dist/fonts/type1/public/cm-super/sfti1200.pfb>
+Output written on report.pdf (14 pages, 624907 bytes).
 PDF statistics:
- 134 PDF objects out of 1000 (max. 8388607)
- 91 compressed objects within 1 object stream
+ 141 PDF objects out of 1000 (max. 8388607)
+ 96 compressed objects within 1 object stream
  0 named destinations out of 1000 (max. 500000)
  26 words of extra memory for PDF output out of 10000 (max. 10000000)
 
