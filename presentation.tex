@@ -85,9 +85,8 @@
 \begin{frame}{How Are Files Stored}
 \begin{center}\includegraphics[scale=0.25]{chordreal}\end{center}
 	\begin{itemize}
-		\item Arranges a network into a ring.
-		\item Maximum $2^m$ nodes in the network.
-		\item Nodes and filenames are hashed to create an $m$-bit key.
+		\item Node responsible for for key $\kappa$ is the $sucessor(\kappa)$.
+		\item $sucessor(\kappa)$ is the node with key $\kappa$ or first following key.
 	\end{itemize}
 
 \end{frame}
@@ -95,9 +94,14 @@
 
 \begin{frame}{How Are Files Retrieved}
 	\begin{itemize}
-		\item Arranges a network into a ring.
-		\item Maximum $2^m$ nodes in the network.
-		\item Nodes and filenames are hashed to create an $m$-bit key.
+		\item To find a file with key $\kappa$, we find $sucessor(\kappa)$.
+		\item We could just ask our successor, who would do the same.
+		\item We use a \emph{finger-table} make this quicker
+		\begin{itemize}
+			\item $m$ entries in the table.
+			\item Stores location of $successor(n+2^{i-1})$ $mod$ $2^m$.
+			\item stuff
+		\end{itemize}
 	\end{itemize}
 
 \end{frame}

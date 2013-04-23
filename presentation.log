@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  22 APR 2013 21:57
+This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  22 APR 2013 22:07
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1182,10 +1182,10 @@ File: chordreal.png Graphic file (type png)
 \tf@snm=\write8
 \openout8 = `presentation.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 129.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 129.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 128.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 128.
  (./presentation.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 129.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 128.
 Package rerunfilecheck Info: File `presentation.out' has not changed.
 (rerunfilecheck)             Checksum: 107FFEE3411077AD9FEA2EC5E1D0E7E5;353.
  ) 
@@ -1198,12 +1198,14 @@ Here is how much of TeX's memory you used:
  715 hyphenation exceptions out of 8191
  49i,19n,62p,401b,640s stack positions out of 5000i,500n,10000p,200000b,50000s
 {c:/texlive/2010/texmf-dist/fonts/enc/dvips/base/8r.enc}<c:/texlive/2010/texm
-f-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><c:/texlive/2010/texmf-dist/fonts/ty
-pe1/urw/helvetic/uhvro8a.pfb>
-Output written on presentation.pdf (9 pages, 154646 bytes).
+f-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><c:/texlive/2010/texmf-dist/fo
+nts/type1/public/amsfonts/cm/cmss10.pfb><c:/texlive/2010/texmf-dist/fonts/type1
+/urw/helvetic/uhvr8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/urw/helvetic/u
+hvro8a.pfb>
+Output written on presentation.pdf (9 pages, 170162 bytes).
 PDF statistics:
- 370 PDF objects out of 1000 (max. 8388607)
- 335 compressed objects within 4 object streams
+ 378 PDF objects out of 1000 (max. 8388607)
+ 341 compressed objects within 4 object streams
  25 named destinations out of 1000 (max. 500000)
  128 words of extra memory for PDF output out of 10000 (max. 10000000)
 
