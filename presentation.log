@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  22 APR 2013 22:28
+This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  22 APR 2013 22:37
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -711,7 +711,11 @@ Package: beamercolorthemeorchid 2010/06/17  (rcs-revision d02a7cf4d8ae)
 (c:/texlive/2010/texmf-dist/tex/latex/beamer/themes/color/beamercolorthemewhale
 .sty
 Package: beamercolorthemewhale 2010/06/17  (rcs-revision d02a7cf4d8ae)
-)) (c:/texlive/2010/texmf-dist/tex/generic/babel/babel.sty
+))
+(c:/texlive/2010/texmf-dist/tex/latex/beamer/themes/color/beamercolorthemecrane
+.sty
+Package: beamercolorthemecrane 2010/06/17  (rcs-revision d02a7cf4d8ae)
+) (c:/texlive/2010/texmf-dist/tex/generic/babel/babel.sty
 Package: babel 2008/07/06 v3.8l The Babel package
 
 (c:/texlive/2010/texmf-dist/tex/generic/babel/english.ldf
@@ -1212,10 +1216,10 @@ Package rerunfilecheck Info: File `presentation.out' has not changed.
 (rerunfilecheck)             Checksum: 9E4AF986CCECF081787AE3E90E156E43;592.
  ) 
 Here is how much of TeX's memory you used:
- 16248 strings out of 493763
- 300295 string characters out of 3148266
- 375442 words of memory out of 3000000
- 19047 multiletter control sequences out of 15000+200000
+ 16256 strings out of 493763
+ 300665 string characters out of 3148266
+ 375692 words of memory out of 3000000
+ 19052 multiletter control sequences out of 15000+200000
  48444 words of font info for 69 fonts, out of 3000000 for 9000
  715 hyphenation exceptions out of 8191
  49i,19n,62p,401b,640s stack positions out of 5000i,500n,10000p,200000b,50000s
@@ -1225,7 +1229,7 @@ nts/type1/public/amsfonts/cm/cmss10.pfb><c:/texlive/2010/texmf-dist/fonts/type1
 /public/amsfonts/cm/cmsy7.pfb><c:/texlive/2010/texmf-dist/fonts/type1/urw/helve
 tic/uhvr8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb
 >
-Output written on presentation.pdf (13 pages, 189699 bytes).
+Output written on presentation.pdf (13 pages, 191055 bytes).
 PDF statistics:
  547 PDF objects out of 1000 (max. 8388607)
  502 compressed objects within 6 object streams
