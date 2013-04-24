@@ -1,4 +1,4 @@
-\documentclass[12pt]{article} % use larger type; default would be 10pt
+\documentclass[12pt]{ieeetran} % use larger type; default would be 10pt
 
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
 
@@ -8,7 +8,7 @@
 \usepackage[scaled]{beramono}
 \usepackage[T1]{fontenc}
 
-\lstset{basicstyle= \footnotesize\ttfamily, language=Logo, tabsize = 2, showspaces= false, showstringspaces=false, breaklines =true, captionpos=b, frame=trBL}
+\lstset{basicstyle= \footnotesize\ttfamily, language=Logo, tabsize = 2, showspaces= false, showstringspaces=false, breaklines =true, captionpos=b, frame=trBL, breakatwhitespace=true}
 
 
 
@@ -18,7 +18,7 @@
 
 %%% The "real" document content comes below...
 
-\title{Simulation of the Nomification of Independent Chord Rings}
+\title{Simulation of the Merging of Independent Chord Rings}
 \author{Andrew Rosen \qquad Brendan Benshoof }
 \date{} % Activate to display a given date or no date (if empty),
          % otherwise the current date is printed 
@@ -67,68 +67,13 @@ We focus on what servers are connected to each other and where they think the re
 
 Our model uses four types of agents: nodes, links representing connections between the nodes, seekers, and updates.  Seekers and updates are turtles that represent the messages being passed along the network.
 
-In our simulation, rather than calling nodes with functions, as would be the case in C or Java, we send messages to the nodes that we want to perform tasks. Specifically, we send \emph{seekers} to find successors of a hash-id, and use emph{updates} to respond to them.  When a node detects a seeker or update destined for itself, it responds accordingly.  Handling a seeker entails either sending an update containing the desired successor back to the original sender, or sending a new seeker to the closest preceding node.  To handle an update, a node updates its the corresponding slot in its finger table to the new node\footnote{To update the successor is the same as updating the first entry in the finger table}.
+In our simulation, rather than calling nodes with functions, as would be the case in C or Java, we send messages to the nodes that we want to perform tasks. Specifically, we send \emph{seekers} to find successors of a hash-id, and use emph{updates} to respond to them.  When a node detects a seeker or update destined for itself, it responds accordingly.  Handling a seeker entails either sending an update containing the desired successor back to the original sender, or sending a new seeker to the closest preceding node.  To handle an update, a node updates its the corresponding slot in its finger table to the new node\footnote{To update the successor is the same as updating the first entry in the finger table}.  This process is show in Listing \ref{find}.
+
+
+
 
 
 The simulation starts by generating a specified number of nodes, which can be arranged into a ring if desired.  While the ring shape is optional, it is highly recommended as it better displays the connections in the network.  Most nodes begin disconnected from any ring, with a few (again, the exact number specified as part of the simulation parameters) creating a ring.  If a node $n$ can see another node $n'$ that is a member of a ring, $n$ will join  $n'$'s ring\footnote{In the event detecting of multiple nodes $n'$, the closest is chosen}. 
-
-The simulation is run by the $go$ procedure, shown in Listing \ref{go}.  First, the seekers and updates move closer to their destinations.
- Of note is that messages do not always travel along the links.  Seekers use the links except when a node is trying to join a ring;  in this case, there is no link that exists for the seeker to use. Updates, on the other hand, never have to use the links because it is assumes a direct connection between the node requesting an update and the node sending the update.
-
-After the messages have moved, they are handled in the manner described above. The last step is the ring maintenance (Listing \ref{maint}).
-
-\begin{lstlisting}[caption={The topmost procedure of the simulation.},label=go]
-to go
-  move-messages
-  handle-messages
-  maintenance
-  tick
-end
-\end{lstlisting}
-
-
-The $maintenance$ procedure is where the original Chord paper was at its most abstract.  Our implementation uses the functions from Chord \cite{Chord}, but the timing is of our own devising and the overall structure was adjusted to account for multiple rings and allowing nodes to have "vision"  and only initially interact with nodes they could see within a certain radius.
-
-The procedure starts by asking all the nodes not in a ring to join a ring.  A node can join a ring only if it can see a node in another ring.  Nodes already in a ring first ensure the their successor has the proper predecessor, then .  This routine is done every few seconds.
-
-The final part is $fix-rings$, where nodes invite another node it can see to their ring. Vision is a required component here;  without it, rings would be unable to join together. Nodes accept this invitation if the asker's ring is better.  When a node accepts an invitation, it deletes its old finger tables and joins the ring like any new node would.  These invitations also happen every few seconds.
-
-In our simulation, a better ring is one with a higher id.   This metric is simple and  provides a high guarantee of forcing the network to converge on a single ring\footnote{This could fail when the vision of the nodes is set to a low value and rings are initialized sparsely.}.
-
-
-
-\begin{lstlisting}[caption={Network maintenance.},label=maint]
-to maintenance
-  ask nodes with [in-ring = -1] 
-  [
-    if any? ((nodes in-radius Radius) with [in-ring != -1])
-    [
-      join-closest
-    ]
-  ] 
-     
-  every Update-Frequency
-  [
-    ask nodes with [in-ring != -1]
-    [
-      stabalize
-      fix-fingers
-    ]
-  ]
-  
-  
-  every Absorb-Frequency
-  [
-    ask nodes with [in-ring != -1]
-    [
-      fix-rings
-    ]
-  ]
-end
-
-\end{lstlisting}
-
-
 
 
 \begin{lstlisting}[label=find, caption={Netlogo implementation of finding a key.}]
@@ -173,36 +118,64 @@ end
 \end{lstlisting}
 
 
+The simulation is run by the $go$ procedure, shown in Listing \ref{go}.  First, the seekers and updates move closer to their destinations.
+
+
+\begin{lstlisting}[caption={The topmost procedure of the simulation.},label=go]
+to go
+  move-messages
+  handle-messages
+  maintenance
+  tick
+end
+\end{lstlisting}
+
+
+Of note is that messages do not always travel along the links.  Seekers use the links except when a node is trying to join a ring;  in this case, there is no link that exists for the seeker to use. Updates, on the other hand, never have to use the links because it is assumes a direct connection between the node requesting an update and the node sending the update.
+
+After the messages have moved, they are handled in the manner described above. The last step is the ring maintenance (Listing \ref{maint}).
 
 
 
-\section{Experiments and Results}
-Our experiment consisted of 200 simulation runs, 100 with our modified technique and 100 with the original algorithm. The number of links at every point in time for all 200 simulations was recorded, and above we graph the mean and variance of each algorithm over time.
+\begin{lstlisting}[caption={Network maintenance.},label=maint]
+to maintenance
+  ask nodes with [in-ring = -1] 
+  [
+    if any? ((nodes in-radius Radius) with [in-ring != -1])
+    [
+      join-closest
+    ]
+  ] 
+     
+  every Update-Frequency
+  [
+    ask nodes with [in-ring != -1]
+    [
+      stabalize
+      fix-fingers
+    ]
+  ]
+  
+  
+  every Absorb-Frequency
+  [
+    ask nodes with [in-ring != -1]
+    [
+      fix-rings
+    ]
+  ]
+end
 
-Using metrics to discuss our success is difficult as our desired change is difficult. An obvious metric like the number of distinct sub-rings proves our technique works, but does not give us any information beyond that. In the unaltered simulation the number of rings stays constant and in the modified behavior it linearly reduces to one. The major metrics of number of links and average travel time both fall into normal ranges when the undesired behavior occurs. Each node has a constant number of links and the expected number of links is nodes * number of links * density. This number of links is unaffected by our undesired behavior as the total density of the ideal ring is equal to the sum of the densities of the sub-rings. Travel time for messages is unaffected as each sub-ring has sections that maintain the entire hash space, thus a message will be replied to, just by the wrong node.
-
-The metrics we found to be of interest is the rate of link creation and variance in the number of links over time. We found after running 100 simulations for each algorithm the the "end behavior" of the number of links metrics was identical, finding a ceiling at around 300 links, but the behavior of each line differed greatly. The unaltered algorithm gave us a behavior which asymptotically approaches the expected 300 links. The altered algorithm however gave us a linear growth which ceiling-ed at the expected 300 links maximum. This is caused by by a component of the new algorithm that when a node changed rings it had to destroy all of it's current links. this loss appears to cancel out the curve-behavior of the unaltered algorithm. The variance of the unaltered-algorithm was greater at every point in time then the altered algorithm in increased over time. This indicates the unaltered algorithm's behavior was heavily influenced by the random starting conditions of the simulation where the constant variance of the altered algorithm indicated it is more stable in respect to starting topology. 
-
-\begin{figure}
-	\includegraphics[width=\linewidth]{chart1}
-	\caption{The unfixed simulation causes nodes to form links more rapidly.  This is because nodes are not joining other rings, which would cut the number of links even as more nodes were discovered.  Eventually, all nodes are in exclusive rings, which accounts for the slower section of growth.}
-	\label{chart1}
-\end{figure}
+\end{lstlisting}
 
 
-\begin{figure}
-	\includegraphics[width=\linewidth]{chart2}
-	\caption{The difference in the number of links in the rings varies wildly when nodes don't join new rings. This is expected from the extremely fast creation of links.  In the fixed network, joins keep the amount of links down to a steady number. }
-	\label{chart2}
-\end{figure}
 
 
-\section{Conclusion and Future Work}
-Our experiments demonstrated how a Chord rings can form from one initialized node by seeking out other nodes it can see.  We examined the impact that  node visibility and vision range had on the rings that would result. We also demonstrated the original algorithms can be modified to perform in an environment like Netlogo.
+The $maintenance$ procedure is where the original Chord paper was at its most abstract.  Our implementation uses the functions from Chord \cite{Chord}, but the timing is of our own devising and the overall structure was adjusted to account for multiple rings and allowing nodes to have "vision"  and only initially interact with nodes they could see within a certain radius.
 
-Our next plans are to take what we have learned from this paper and apply it to a real-world program for replicating files.
+The procedure starts by asking all the nodes not in a ring to join a ring.  A node can join a ring only if it can see a node in another ring.  Nodes already in a ring first ensure the their successor has the proper predecessor, then fix their finger table.  This routine is done every few seconds.
 
-
+The final part is $fix-rings$, where nodes invite another node it can see to their ring. Vision is a required component here;  without it, rings would be unable to join together. Nodes accept this invitation if the asker's ring is better.  When a node accepts an invitation, it deletes its old finger tables and joins the ring like any new node would.  These invitations also happen every few seconds.  Figure \ref{problem} shows a Chord network with multiple rings, and Figure \ref{fixed} shows a Chord network after all the separate rings have merged.
 
 \begin{figure}
 \includegraphics[width=\linewidth]{example_problem}
@@ -210,12 +183,59 @@ Our next plans are to take what we have learned from this paper and apply it to 
 \label{problem}
 \end{figure}
 
-
 \begin{figure}
 \includegraphics[width=\linewidth]{fixed_example}
 \caption{A chord network where all the nodes have joined a single ring.}
 \label{fixed}
 \end{figure}
+
+
+
+
+In our simulation, a better ring is one with a higher id.   This metric is simple and  provides a high guarantee of forcing the network to converge on a single ring\footnote{This could fail when the vision of the nodes is set to a low value and rings are initialized sparsely.}.
+
+
+
+
+
+
+
+
+
+
+\section{Experiments and Results}
+Our experiment consisted of 200 simulation runs, 100 with our modified technique and 100 with the original algorithm. The number of links at every point in time for all 200 simulations was recorded, and above we graph the mean and variance of each algorithm over time.
+
+Using metrics to discuss our success is difficult as our desired change is difficult. An obvious metric like the number of distinct sub-rings proves our technique works, but does not give us any information beyond that. In the unaltered simulation the number of rings stays constant and in the modified behavior it linearly reduces to one. The major metrics of number of links and average travel time both fall into normal ranges when the undesired behavior occurs. Each node has a constant number of links and the expected number of links is $nodes * number\_of\_links * density$. This number of links is unaffected by our undesired behavior as the total density of the ideal ring is equal to the sum of the densities of the sub-rings. Travel time for messages is unaffected as each sub-ring has sections that maintain the entire hash space, thus a message will be replied to, just by the wrong node.
+
+The metrics we found to be of interest is the rate of link creation and variance in the number of links over time. We found after running 100 simulations for each algorithm the the "end behavior" of the number of links metrics was identical, finding a ceiling at around 300 links, but the behavior of each line differed greatly. The unaltered algorithm gave us a behavior which asymptotically approaches the expected 300 links. The altered algorithm however gave us a linear growth which ceiling-ed at the expected 300 links maximum as shown in Figure \ref{chart1}.  This is caused by by a component of the new algorithm that when a node changed rings it had to destroy all of it's current links. This loss appears to cancel out the curve-behavior of the unaltered algorithm. 
+
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{chart1}
+	\caption{The unfixed simulation causes nodes to form links more rapidly.  This is because nodes are not joining other rings, which would cut the number of links even as more nodes were discovered.  Eventually, all nodes are in exclusive rings, which accounts for the slower section of growth.}
+	\label{chart1}
+\end{figure}
+
+The variance of the unaltered-algorithm was greater at every point in time then the altered algorithm in increased over time. Figure \ref{chart2} indicates the unaltered algorithm's behavior was heavily influenced by the random starting conditions of the simulation where the constant variance of the altered algorithm indicated it is more stable in respect to starting topology. 
+
+
+
+\begin{figure}
+	\includegraphics[width=\linewidth]{chart2}
+	\caption{The number of links is heavily dependent on the initial setup.  A lower variance in the fixed simulation implies the values are more predictable.}
+	\label{chart2}
+\end{figure}
+
+
+\section{Conclusion and Future Work}
+
+Our intent with this project was to use our simulation from homework three to solve a problem with the Chord distributed hash. While the final changes to the algorithm may seem simple, the core difficulty with the Chord system is that only its best and worst case behaviors are well defined mathematically. The theoretical model offers minimal aid when dealing with the majority of behaviors. 
+
+The simulation proved a very good tool for this process. It allowed us to test and show how small changes to the algorithm would have an impact on the formation of Chord rings. This improvement is an important step to implementing a Chord hash as the basis for a distributed service.
+
+
+
 
 
 
