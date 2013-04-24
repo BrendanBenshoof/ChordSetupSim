@@ -121,12 +121,18 @@
 \subsection{Goals}
 
 \begin{frame}{Goals}
-What happens:
+We want to examine global behavior.  As a result we ignore:
 	\begin{itemize}
-		\item If there is more than one initial ring?
-		\item If our range of sight is limited?
-		\item ANOTHER THING
-		\item We ignore file lookup; identical to node lookup.
+		\item Actual network topology outside of Chord.
+		\item Real Network Latency.
+		\item File storage.
+	\end{itemize}
+We instead focus on:
+	\begin{itemize}
+		\item Overlay topology.
+		\item What choices are made in a race condition.
+		\item What happens when rings compete for nodes.
+		\item Who ends up in which ring.
 	\end{itemize}
 
 \end{frame}
@@ -232,7 +238,10 @@ What happens:
 \section{Conclusion and Future Work}
 
 \begin{frame}{Conclusion}
-
+	\begin{itemize}
+		\item We have a scheme to merge multiple rings.
+		\item This was a necessary step for implementation.
+	\end{itemize}
 \end{frame}
 
 

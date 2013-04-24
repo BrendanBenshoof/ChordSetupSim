@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  23 APR 2013 19:27
+This is pdfTeX, Version 3.1415926-1.40.11 (Web2C 2010) (format=pdflatex 2011.3.30)  23 APR 2013 20:36
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1208,7 +1208,7 @@ File: chart1.png Graphic file (type png)
 File: chart2.png Graphic file (type png)
 
 <use chart2.png>
-Overfull \vbox (16.94313pt too high) detected at line 230
+Overfull \vbox (16.94313pt too high) detected at line 236
  []
 
 [17
@@ -1225,10 +1225,10 @@ Overfull \vbox (16.94313pt too high) detected at line 230
 \tf@snm=\write8
 \openout8 = `presentation.snm'.
 
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 240.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 240.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 249.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 249.
  (./presentation.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 240.
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 249.
 Package rerunfilecheck Info: File `presentation.out' has not changed.
 (rerunfilecheck)             Checksum: 2B90A2C8F4D6D4313C8E2515F4E65140;706.
  ) 
@@ -1246,7 +1246,7 @@ nts/type1/public/amsfonts/cm/cmss10.pfb><c:/texlive/2010/texmf-dist/fonts/type1
 /public/amsfonts/cm/cmsy7.pfb><c:/texlive/2010/texmf-dist/fonts/type1/urw/helve
 tic/uhvr8a.pfb><c:/texlive/2010/texmf-dist/fonts/type1/urw/helvetic/uhvro8a.pfb
 >
-Output written on presentation.pdf (18 pages, 348451 bytes).
+Output written on presentation.pdf (18 pages, 348528 bytes).
 PDF statistics:
  732 PDF objects out of 1000 (max. 8388607)
  676 compressed objects within 7 object streams
